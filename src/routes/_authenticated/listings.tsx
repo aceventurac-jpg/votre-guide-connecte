@@ -39,7 +39,7 @@ function ListingsPage() {
   });
 
   const create = useMutation({
-    mutationFn: (payload: Parameters<typeof createFn>[0]["data"]) => createFn({ data: payload }),
+    mutationFn: (payload: CreatePayload) => createFn({ data: payload }),
     onSuccess: () => {
       toast.success("Annonce publiée !");
       setOpen(false);

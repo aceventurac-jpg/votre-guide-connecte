@@ -14,16 +14,291 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      conversations: {
+        Row: {
+          agent_used: Database["public"]["Enums"]["agent_type"] | null
+          created_at: string
+          id: string
+          message: string
+          role: Database["public"]["Enums"]["message_role"]
+          user_id: string
+        }
+        Insert: {
+          agent_used?: Database["public"]["Enums"]["agent_type"] | null
+          created_at?: string
+          id?: string
+          message: string
+          role: Database["public"]["Enums"]["message_role"]
+          user_id: string
+        }
+        Update: {
+          agent_used?: Database["public"]["Enums"]["agent_type"] | null
+          created_at?: string
+          id?: string
+          message?: string
+          role?: Database["public"]["Enums"]["message_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      listings: {
+        Row: {
+          active: boolean
+          category: Database["public"]["Enums"]["listing_category"]
+          city: string | null
+          created_at: string
+          description: string
+          id: string
+          level: string | null
+          listing_type: Database["public"]["Enums"]["listing_type"]
+          price: number | null
+          subject: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          category: Database["public"]["Enums"]["listing_category"]
+          city?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          level?: string | null
+          listing_type: Database["public"]["Enums"]["listing_type"]
+          price?: number | null
+          subject?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          category?: Database["public"]["Enums"]["listing_category"]
+          city?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          level?: string | null
+          listing_type?: Database["public"]["Enums"]["listing_type"]
+          price?: number | null
+          subject?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          listing_id: string
+          receiver_id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          listing_id: string
+          receiver_id: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          listing_id?: string
+          receiver_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          city: string | null
+          country: string | null
+          created_at: string
+          id: string
+          language: string | null
+          name: string
+          profile_type: Database["public"]["Enums"]["profile_type"] | null
+          updated_at: string
+          verified: boolean
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          id: string
+          language?: string | null
+          name?: string
+          profile_type?: Database["public"]["Enums"]["profile_type"] | null
+          updated_at?: string
+          verified?: boolean
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          language?: string | null
+          name?: string
+          profile_type?: Database["public"]["Enums"]["profile_type"] | null
+          updated_at?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string
+          reason: string
+          reporter_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id: string
+          reason: string
+          reporter_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string
+          reason?: string
+          reporter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          listing_id: string
+          rating: number
+          reviewed_id: string
+          reviewer_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          rating: number
+          reviewed_id: string
+          reviewer_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          rating?: number
+          reviewed_id?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_preferences: {
+        Row: {
+          budget: string | null
+          family_status: string | null
+          interests: string[] | null
+          travel_style: string | null
+          traveler_type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          budget?: string | null
+          family_status?: string | null
+          interests?: string[] | null
+          travel_style?: string | null
+          traveler_type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          budget?: string | null
+          family_status?: string | null
+          interests?: string[] | null
+          travel_style?: string | null
+          traveler_type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      user_ratings: {
+        Row: {
+          avg_rating: number | null
+          review_count: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      agent_type:
+        | "administratif"
+        | "sante"
+        | "voyage"
+        | "services_locaux"
+        | "commerce_international"
+        | "apprentissage"
+        | "general"
+      listing_category:
+        | "Administratif"
+        | "Santé"
+        | "Voyage"
+        | "Services Locaux"
+        | "Commerce International"
+        | "Apprentissage"
+      listing_type: "Vente" | "Location" | "Covoiturage" | "Service" | "Tutorat"
+      message_role: "user" | "assistant"
+      profile_type:
+        | "particulier"
+        | "etudiant"
+        | "auto_entrepreneur"
+        | "retraite"
+        | "etranger"
+        | "parent"
+        | "aidant"
+        | "senior"
+        | "professionnel"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +425,37 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      agent_type: [
+        "administratif",
+        "sante",
+        "voyage",
+        "services_locaux",
+        "commerce_international",
+        "apprentissage",
+        "general",
+      ],
+      listing_category: [
+        "Administratif",
+        "Santé",
+        "Voyage",
+        "Services Locaux",
+        "Commerce International",
+        "Apprentissage",
+      ],
+      listing_type: ["Vente", "Location", "Covoiturage", "Service", "Tutorat"],
+      message_role: ["user", "assistant"],
+      profile_type: [
+        "particulier",
+        "etudiant",
+        "auto_entrepreneur",
+        "retraite",
+        "etranger",
+        "parent",
+        "aidant",
+        "senior",
+        "professionnel",
+      ],
+    },
   },
 } as const

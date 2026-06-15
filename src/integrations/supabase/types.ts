@@ -46,6 +46,7 @@ export type Database = {
           active: boolean
           category: Database["public"]["Enums"]["listing_category"]
           city: string | null
+          context: Database["public"]["Enums"]["context_type"]
           created_at: string
           description: string
           id: string
@@ -60,6 +61,7 @@ export type Database = {
           active?: boolean
           category: Database["public"]["Enums"]["listing_category"]
           city?: string | null
+          context?: Database["public"]["Enums"]["context_type"]
           created_at?: string
           description: string
           id?: string
@@ -74,6 +76,7 @@ export type Database = {
           active?: boolean
           category?: Database["public"]["Enums"]["listing_category"]
           city?: string | null
+          context?: Database["public"]["Enums"]["context_type"]
           created_at?: string
           description?: string
           id?: string
@@ -120,6 +123,94 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      post_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          category: Database["public"]["Enums"]["post_category"]
+          content: string
+          context: Database["public"]["Enums"]["context_type"]
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["post_category"]
+          content: string
+          context?: Database["public"]["Enums"]["context_type"]
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["post_category"]
+          content?: string
+          context?: Database["public"]["Enums"]["context_type"]
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -280,6 +371,7 @@ export type Database = {
         | "commerce_international"
         | "apprentissage"
         | "general"
+      context_type: "loisirs" | "professionnel"
       listing_category:
         | "Administratif"
         | "Santé"
@@ -289,6 +381,13 @@ export type Database = {
         | "Apprentissage"
       listing_type: "Vente" | "Location" | "Covoiturage" | "Service" | "Tutorat"
       message_role: "user" | "assistant"
+      post_category:
+        | "administratif"
+        | "sante"
+        | "voyage"
+        | "services_locaux"
+        | "commerce_international"
+        | "apprentissage"
       profile_type:
         | "particulier"
         | "etudiant"
@@ -435,6 +534,7 @@ export const Constants = {
         "apprentissage",
         "general",
       ],
+      context_type: ["loisirs", "professionnel"],
       listing_category: [
         "Administratif",
         "Santé",
@@ -445,6 +545,14 @@ export const Constants = {
       ],
       listing_type: ["Vente", "Location", "Covoiturage", "Service", "Tutorat"],
       message_role: ["user", "assistant"],
+      post_category: [
+        "administratif",
+        "sante",
+        "voyage",
+        "services_locaux",
+        "commerce_international",
+        "apprentissage",
+      ],
       profile_type: [
         "particulier",
         "etudiant",

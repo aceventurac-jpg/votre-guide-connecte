@@ -1,35 +1,34 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
 import { sendChatMessage, getChatHistory, clearChatHistory } from "@/lib/chat.functions";
+import { createPost } from "@/lib/community.functions";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Sparkles, Trash2, FileText, Stethoscope, Plane, Wrench, Globe2, GraduationCap } from "lucide-react";
+import { Send, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { AGENT_META, type AgentKey, AGENT_ORDER } from "@/lib/agent-meta";
+import { AssistantMessage } from "@/components/ChatMessage";
+
+const chatSearch = z.object({ agent: z.enum(AGENT_ORDER as [AgentKey, ...AgentKey[]]).optional() });
 
 export const Route = createFileRoute("/_authenticated/chat")({
   head: () => ({ meta: [{ title: "Chat — Assistant Citoyen" }] }),
+  validateSearch: chatSearch,
   component: ChatPage,
 });
 
-const AGENT_META = {
-  administratif: { label: "Administratif", icon: FileText },
-  sante: { label: "Santé", icon: Stethoscope },
-  voyage: { label: "Voyage", icon: Plane },
-  services_locaux: { label: "Services Locaux", icon: Wrench },
-  commerce_international: { label: "Commerce International", icon: Globe2 },
-  apprentissage: { label: "Apprentissage", icon: GraduationCap },
-  general: { label: "Général", icon: Sparkles },
-} as const;
-type AgentKey = keyof typeof AGENT_META;
-
 function ChatPage() {
   const qc = useQueryClient();
+  const search = useSearch({ from: "/_authenticated/chat" });
+  const preferred = search.agent as AgentKey | undefined;
   const fetchHistory = useServerFn(getChatHistory);
   const sendFn = useServerFn(sendChatMessage);
   const clearFn = useServerFn(clearChatHistory);
+  const sharePost = useServerFn(createPost);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
@@ -40,7 +39,7 @@ function ChatPage() {
   });
 
   const send = useMutation({
-    mutationFn: (message: string) => sendFn({ data: { message } }),
+    mutationFn: (message: string) => sendFn({ data: { message, preferred_agent: preferred } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["chat-history"] }),
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erreur"),
   });
@@ -50,15 +49,19 @@ function ChatPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["chat-history"] }),
   });
 
+  const share = useMutation({
+    mutationFn: (p: { category: AgentKey; content: string }) =>
+      sharePost({ data: { category: p.category as Exclude<AgentKey, "general">, content: p.content, context: "loisirs" } }),
+    onSuccess: () => toast.success("Partagé sur la communauté !"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erreur"),
+  });
+
   const messages = data?.messages ?? [];
+  const preferredMeta = preferred ? AGENT_META[preferred] : null;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length, send.isPending]);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, [send.isPending]);
 
   function submit() {
     const text = input.trim();
@@ -73,7 +76,11 @@ function ChatPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold">Ta conversation</h1>
-            <p className="text-xs text-muted-foreground">L'orchestrateur choisit automatiquement l'agent adapté.</p>
+            <p className="text-xs text-muted-foreground">
+              {preferredMeta
+                ? `Univers ${preferredMeta.label} sélectionné`
+                : "L'orchestrateur choisit automatiquement l'agent adapté."}
+            </p>
           </div>
           {messages.length > 0 && (
             <Button variant="ghost" size="sm" onClick={() => clear.mutate()}>
@@ -82,26 +89,24 @@ function ChatPage() {
           )}
         </div>
 
+        {preferredMeta && (
+          <div
+            className="rounded-xl border p-3 text-sm flex items-center gap-3"
+            style={{ background: preferredMeta.color, borderColor: preferredMeta.ring }}
+          >
+            <preferredMeta.icon className="size-5" style={{ color: preferredMeta.accent }} />
+            <div>
+              <div className="font-medium" style={{ color: preferredMeta.accent }}>{preferredMeta.label}</div>
+              <div className="text-xs text-muted-foreground">{preferredMeta.description}</div>
+            </div>
+          </div>
+        )}
+
         <div className="flex-1 space-y-4 overflow-y-auto pr-1">
           {messages.length === 0 && !send.isPending && (
             <div className="text-center py-12 text-muted-foreground">
               <Sparkles className="size-8 mx-auto mb-3 text-accent" />
               <p>Pose ta première question pour commencer.</p>
-              <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                {[
-                  "Comment renouveler ma carte d'identité ?",
-                  "Préparer mon voyage à Lisbonne",
-                  "Aide aux devoirs : fractions CM2",
-                ].map((s) => (
-                  <button
-                    key={s}
-                    className="px-3 py-1.5 rounded-full border text-xs hover:bg-secondary"
-                    onClick={() => setInput(s)}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
             </div>
           )}
 
@@ -111,13 +116,27 @@ function ChatPage() {
             const meta = agent ? AGENT_META[agent] : null;
             return (
               <div key={m.id} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[85%] ${isUser ? "chat-bubble-user" : "chat-bubble-assistant"} px-4 py-3`}>
+                <div className={`max-w-[90%] ${isUser ? "chat-bubble-user px-4 py-3" : "chat-bubble-assistant px-4 py-3"}`}>
                   {!isUser && meta && (
-                    <div className="badge-agent mb-2">
+                    <div
+                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium mb-2"
+                      style={{ background: meta.color, color: meta.accent }}
+                    >
                       <meta.icon className="size-3" /> {meta.label}
                     </div>
                   )}
-                  <div className="whitespace-pre-wrap text-sm leading-relaxed">{m.message}</div>
+                  {isUser ? (
+                    <div className="whitespace-pre-wrap text-sm leading-relaxed">{m.message}</div>
+                  ) : (
+                    <AssistantMessage
+                      content={m.message}
+                      onShare={
+                        agent && agent !== "general"
+                          ? () => share.mutate({ category: agent, content: m.message.slice(0, 1800) })
+                          : undefined
+                      }
+                    />
+                  )}
                 </div>
               </div>
             );
@@ -148,7 +167,7 @@ function ChatPage() {
                 submit();
               }
             }}
-            placeholder="Pose ta question..."
+            placeholder={preferredMeta ? `Question sur ${preferredMeta.label.toLowerCase()}...` : "Pose ta question..."}
             rows={1}
             className="resize-none min-h-[44px] border-0 focus-visible:ring-0 shadow-none"
           />

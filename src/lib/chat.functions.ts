@@ -2,8 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-const SendInput = z.object({ message: z.string().trim().min(1).max(4000) });
-
 const VALID_AGENTS = [
   "administratif",
   "sante",
@@ -14,6 +12,11 @@ const VALID_AGENTS = [
   "general",
 ] as const;
 type AgentKey = (typeof VALID_AGENTS)[number];
+
+const SendInput = z.object({
+  message: z.string().trim().min(1).max(4000),
+  preferred_agent: z.enum(VALID_AGENTS).optional(),
+});
 
 export const sendChatMessage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -30,7 +33,6 @@ export const sendChatMessage = createServerFn({ method: "POST" })
     const gateway = createLovableAiGatewayProvider(apiKey);
     const model = gateway("google/gemini-3-flash-preview");
 
-    // 1) Récupère contexte utilisateur (profil + préférences) et historique récent
     const [{ data: profile }, { data: prefs }, { data: history }] = await Promise.all([
       supabase.from("profiles").select("name, city, country, profile_type").eq("id", userId).maybeSingle(),
       supabase.from("user_preferences").select("*").eq("user_id", userId).maybeSingle(),
@@ -44,25 +46,26 @@ export const sendChatMessage = createServerFn({ method: "POST" })
 
     const recent = (history ?? []).reverse();
 
-    // 2) Insère le message utilisateur
     await supabase.from("conversations").insert({
       user_id: userId,
       role: "user",
       message: data.message,
     });
 
-    // 3) Orchestrateur : détecte l'intention
-    let agent: AgentKey = "general";
-    try {
-      const detect = await generateText({
-        model,
-        system: ORCHESTRATOR_PROMPT,
-        prompt: data.message,
-      });
-      const raw = detect.text.trim().toLowerCase().replace(/[^a-z_]/g, "");
-      if ((VALID_AGENTS as readonly string[]).includes(raw)) agent = raw as AgentKey;
-    } catch (e) {
-      console.error("Intent detection failed", e);
+    // Agent : préféré (bulle cliquée) sinon orchestrateur
+    let agent: AgentKey = data.preferred_agent ?? "general";
+    if (!data.preferred_agent) {
+      try {
+        const detect = await generateText({
+          model,
+          system: ORCHESTRATOR_PROMPT,
+          prompt: data.message,
+        });
+        const raw = detect.text.trim().toLowerCase().replace(/[^a-z_]/g, "");
+        if ((VALID_AGENTS as readonly string[]).includes(raw)) agent = raw as AgentKey;
+      } catch (e) {
+        console.error("Intent detection failed", e);
+      }
     }
 
     // 4) Agent spécialisé répond

@@ -169,6 +169,12 @@ function ChatPage() {
           </Button>
         </div>
       </div>
+      <PublishPostDialog
+        open={shareState.open}
+        onOpenChange={(v) => setShareState((s) => ({ ...s, open: v }))}
+        defaultCategory={shareState.category}
+        defaultContent={shareState.content}
+      />
     </AppShell>
   );
 }

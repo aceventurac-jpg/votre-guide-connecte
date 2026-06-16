@@ -202,6 +202,16 @@ function NewListingDialog({ onSubmit, pending }: { onSubmit: (p: CreatePayload) 
           </div>
         </div>
         <div>
+          <Label>Contexte</Label>
+          <Select value={ctx} onValueChange={(v) => setCtx(v as typeof ctx)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="loisirs">Loisirs / Particulier</SelectItem>
+              <SelectItem value="professionnel">Professionnel</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
           <Label>Titre</Label>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} required minLength={3} />
         </div>

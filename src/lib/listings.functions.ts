@@ -12,9 +12,12 @@ export const CATEGORIES = [
 ] as const;
 export const TYPES = ["Vente", "Location", "Covoiturage", "Service", "Tutorat"] as const;
 
+export const CONTEXTS = ["loisirs", "professionnel"] as const;
+
 const ListingInput = z.object({
   category: z.enum(CATEGORIES),
   listing_type: z.enum(TYPES),
+  context: z.enum(CONTEXTS).optional(),
   title: z.string().trim().min(3).max(140),
   description: z.string().trim().min(10).max(2000),
   price: z.number().nonnegative().max(1_000_000).nullable().optional(),
@@ -40,6 +43,7 @@ const ListInput = z
   .object({
     category: z.enum(CATEGORIES).optional(),
     listing_type: z.enum(TYPES).optional(),
+    context: z.enum(CONTEXTS).optional(),
   })
   .optional();
 
@@ -50,13 +54,14 @@ export const listListings = createServerFn({ method: "POST" })
     let q = context.supabase
       .from("listings")
       .select(
-        "id, category, listing_type, title, description, price, subject, level, city, created_at, user_id",
+        "id, category, listing_type, context, title, description, price, subject, level, city, created_at, user_id",
       )
       .eq("active", true)
       .order("created_at", { ascending: false })
       .limit(100);
     if (data?.category) q = q.eq("category", data.category);
     if (data?.listing_type) q = q.eq("listing_type", data.listing_type);
+    if (data?.context) q = q.eq("context", data.context);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
 

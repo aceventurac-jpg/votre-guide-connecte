@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Sparkles, MessageCircle, Store, History, LogOut } from "lucide-react";
+import { Sparkles, MessageCircle, Users, Store, History, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 
 const NAV = [
   { to: "/chat", label: "Chat", icon: MessageCircle },
+  { to: "/community", label: "Communauté", icon: Users },
   { to: "/listings", label: "Annonces", icon: Store },
   { to: "/history", label: "Historique", icon: History },
 ] as const;

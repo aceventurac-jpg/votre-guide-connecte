@@ -4,7 +4,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { sendChatMessage, getChatHistory, clearChatHistory } from "@/lib/chat.functions";
-import { createPost } from "@/lib/community.functions";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +11,7 @@ import { Send, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AGENT_META, type AgentKey, AGENT_ORDER } from "@/lib/agent-meta";
 import { AssistantMessage } from "@/components/ChatMessage";
+import { PublishPostDialog } from "@/components/PublishPostDialog";
 
 const chatSearch = z.object({ agent: z.enum(AGENT_ORDER as [AgentKey, ...AgentKey[]]).optional() });
 
@@ -28,10 +28,10 @@ function ChatPage() {
   const fetchHistory = useServerFn(getChatHistory);
   const sendFn = useServerFn(sendChatMessage);
   const clearFn = useServerFn(clearChatHistory);
-  const sharePost = useServerFn(createPost);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
+  const [shareState, setShareState] = useState<{ open: boolean; category?: Exclude<AgentKey, "general">; content: string }>({ open: false, content: "" });
 
   const { data } = useQuery({
     queryKey: ["chat-history"],
@@ -47,13 +47,6 @@ function ChatPage() {
   const clear = useMutation({
     mutationFn: () => clearFn(),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["chat-history"] }),
-  });
-
-  const share = useMutation({
-    mutationFn: (p: { category: AgentKey; content: string }) =>
-      sharePost({ data: { category: p.category as Exclude<AgentKey, "general">, content: p.content, context: "loisirs" } }),
-    onSuccess: () => toast.success("Partagé sur la communauté !"),
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erreur"),
   });
 
   const messages = data?.messages ?? [];
@@ -132,7 +125,7 @@ function ChatPage() {
                       content={m.message}
                       onShare={
                         agent && agent !== "general"
-                          ? () => share.mutate({ category: agent, content: m.message.slice(0, 1800) })
+                          ? () => setShareState({ open: true, category: agent as Exclude<AgentKey, "general">, content: m.message.slice(0, 1800) })
                           : undefined
                       }
                     />
@@ -176,6 +169,12 @@ function ChatPage() {
           </Button>
         </div>
       </div>
+      <PublishPostDialog
+        open={shareState.open}
+        onOpenChange={(v) => setShareState((s) => ({ ...s, open: v }))}
+        defaultCategory={shareState.category}
+        defaultContent={shareState.content}
+      />
     </AppShell>
   );
 }

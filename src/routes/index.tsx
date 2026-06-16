@@ -1,6 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
-import { Sparkles, MessageCircle, Users, ShieldCheck, FileText, Stethoscope, Plane, Wrench, Globe2, GraduationCap } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Sparkles, MessageCircle, Users, ShieldCheck } from "lucide-react";
+import { AGENT_ORDER, AGENT_META, type AgentKey } from "@/lib/agent-meta";
+import { UniverseBubble } from "@/components/UniverseBubble";
+import { getHomePreview } from "@/lib/home.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -11,19 +17,21 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Pose ta question, on s'occupe du reste." },
     ],
   }),
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData({
+      queryKey: ["home-preview"],
+      queryFn: () => getHomePreview(),
+    }),
   component: Landing,
 });
 
-const agents = [
-  { icon: FileText, label: "Administratif" },
-  { icon: Stethoscope, label: "Santé" },
-  { icon: Plane, label: "Voyage" },
-  { icon: Wrench, label: "Services Locaux" },
-  { icon: Globe2, label: "Commerce International" },
-  { icon: GraduationCap, label: "Apprentissage" },
-];
-
 function Landing() {
+  const previewFn = useServerFn(getHomePreview);
+  const { data } = useQuery({
+    queryKey: ["home-preview"],
+    queryFn: () => previewFn(),
+  });
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="px-6 py-5 flex items-center justify-between">
@@ -37,7 +45,7 @@ function Landing() {
       </header>
 
       <main className="flex-1">
-        <section className="px-6 py-16 md:py-24 max-w-4xl mx-auto text-center space-y-6">
+        <section className="px-6 py-14 md:py-20 max-w-4xl mx-auto text-center space-y-5">
           <span className="badge-agent"><Sparkles className="size-3" /> 6 agents spécialisés</span>
           <h1 className="text-4xl md:text-6xl font-semibold tracking-tight">
             Pose ta question,
@@ -45,37 +53,71 @@ function Landing() {
             <span className="text-accent">on s'occupe du reste.</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Un chat unique. Notre orchestrateur détecte automatiquement ton besoin et appelle l'expert adapté.
+            Choisis un univers ou laisse l'orchestrateur détecter ton besoin.
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <Link to="/auth"><Button size="lg">Commencer gratuitement</Button></Link>
-            <Link to="/auth"><Button size="lg" variant="outline">Découvrir les annonces</Button></Link>
+            <Link to="/chat"><Button size="lg">Démarrer le chat</Button></Link>
+            <Link to="/community"><Button size="lg" variant="outline">Voir la communauté</Button></Link>
           </div>
         </section>
 
-        <section className="px-6 py-12 bg-secondary/50">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-center text-sm font-medium text-muted-foreground uppercase tracking-wider mb-8">
-              Six expertises, une seule conversation
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {agents.map(({ icon: Icon, label }) => (
-                <div key={label} className="bg-card rounded-2xl p-5 border flex items-center gap-3">
-                  <div className="size-10 rounded-xl bg-mauve-soft text-accent inline-flex items-center justify-center">
-                    <Icon className="size-5" />
-                  </div>
-                  <span className="font-medium">{label}</span>
-                </div>
-              ))}
+        <section className="px-6 pb-14 max-w-5xl mx-auto">
+          <h2 className="text-center text-sm font-medium text-muted-foreground uppercase tracking-wider mb-6">
+            Choisis un univers
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {AGENT_ORDER.map((k, i) => (
+              <UniverseBubble key={k} agent={k} index={i} />
+            ))}
+          </div>
+        </section>
+
+        <section className="px-6 py-12 bg-secondary/40">
+          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
+            <div className="space-y-3">
+              <h3 className="font-semibold flex items-center gap-2"><Users className="size-4 text-accent" /> Derniers échanges communauté</h3>
+              <div className="space-y-2">
+                {(data?.posts ?? []).map((p) => {
+                  const meta = AGENT_META[p.category as AgentKey] ?? AGENT_META.general;
+                  return (
+                    <Link key={p.id} to="/community/$id" params={{ id: p.id }}>
+                      <Card className="p-3 hover:border-accent transition">
+                        <div className="text-[11px] mb-1" style={{ color: meta.accent }}>{meta.label}</div>
+                        <p className="text-sm line-clamp-2">{p.content}</p>
+                      </Card>
+                    </Link>
+                  );
+                })}
+                {(!data?.posts || data.posts.length === 0) && (
+                  <p className="text-sm text-muted-foreground">Pas encore de publication.</p>
+                )}
+              </div>
+            </div>
+            <div className="space-y-3">
+              <h3 className="font-semibold flex items-center gap-2"><ShieldCheck className="size-4 text-accent" /> Dernières annonces</h3>
+              <div className="space-y-2">
+                {(data?.listings ?? []).map((l) => (
+                  <Link key={l.id} to="/listings/$id" params={{ id: l.id }}>
+                    <Card className="p-3 hover:border-accent transition">
+                      <div className="text-[11px] mb-1 text-muted-foreground">{l.category} · {l.listing_type}</div>
+                      <p className="text-sm font-medium line-clamp-1">{l.title}</p>
+                      <p className="text-xs text-muted-foreground line-clamp-1">{l.description}</p>
+                    </Card>
+                  </Link>
+                ))}
+                {(!data?.listings || data.listings.length === 0) && (
+                  <p className="text-sm text-muted-foreground">Pas encore d'annonce.</p>
+                )}
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="px-6 py-16 max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+        <section className="px-6 py-14 max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
           {[
-            { icon: MessageCircle, t: "Un seul chat", d: "Une interface naturelle, l'orchestrateur route ta question au bon agent." },
-            { icon: Users, t: "Annonces communautaires", d: "Vente, location, covoiturage, services, tutorat — avec messagerie sécurisée." },
-            { icon: ShieldCheck, t: "Confiance intégrée", d: "Profils vérifiés, avis, signalements et conseils de sécurité." },
+            { icon: MessageCircle, t: "Un seul chat", d: "L'orchestrateur route ta question au bon agent." },
+            { icon: Users, t: "Communauté entraidante", d: "Pose tes questions, partage tes retours d'expérience." },
+            { icon: ShieldCheck, t: "Confiance intégrée", d: "Profils vérifiés, avis, signalements et sécurité." },
           ].map(({ icon: Icon, t, d }) => (
             <div key={t} className="space-y-2">
               <div className="size-10 rounded-xl bg-primary/15 text-primary inline-flex items-center justify-center">

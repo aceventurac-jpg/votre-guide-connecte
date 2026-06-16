@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CATEGORIES, TYPES, createListing, listListings } from "@/lib/listings.functions";
+import { CATEGORIES, TYPES, CONTEXTS, createListing, listListings } from "@/lib/listings.functions";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,15 +25,17 @@ function ListingsPage() {
   const createFn = useServerFn(createListing);
   const [cat, setCat] = useState<string>("all");
   const [type, setType] = useState<string>("all");
+  const [ctx, setCtx] = useState<string>("all");
   const [open, setOpen] = useState(false);
 
   const { data } = useQuery({
-    queryKey: ["listings", cat, type],
+    queryKey: ["listings", cat, type, ctx],
     queryFn: () =>
       listFn({
         data: {
           category: cat === "all" ? undefined : (cat as (typeof CATEGORIES)[number]),
           listing_type: type === "all" ? undefined : (type as (typeof TYPES)[number]),
+          context: ctx === "all" ? undefined : (ctx as (typeof CONTEXTS)[number]),
         },
       }),
   });
@@ -90,6 +92,14 @@ function ListingsPage() {
               {TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
             </SelectContent>
           </Select>
+          <Select value={ctx} onValueChange={setCtx}>
+            <SelectTrigger className="w-[180px]"><SelectValue placeholder="Contexte" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous contextes</SelectItem>
+              <SelectItem value="loisirs">Loisirs</SelectItem>
+              <SelectItem value="professionnel">Professionnel</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -139,6 +149,7 @@ function ListingsPage() {
 type CreatePayload = {
   category: (typeof CATEGORIES)[number];
   listing_type: (typeof TYPES)[number];
+  context: (typeof CONTEXTS)[number];
   title: string;
   description: string;
   price?: number | null;
@@ -150,6 +161,7 @@ type CreatePayload = {
 function NewListingDialog({ onSubmit, pending }: { onSubmit: (p: CreatePayload) => void; pending: boolean }) {
   const [category, setCategory] = useState<(typeof CATEGORIES)[number]>("Services Locaux");
   const [listing_type, setType] = useState<(typeof TYPES)[number]>("Service");
+  const [ctx, setCtx] = useState<(typeof CONTEXTS)[number]>("loisirs");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -165,7 +177,7 @@ function NewListingDialog({ onSubmit, pending }: { onSubmit: (p: CreatePayload) 
         onSubmit={(e) => {
           e.preventDefault();
           onSubmit({
-            category, listing_type, title, description,
+            category, listing_type, context: ctx, title, description,
             price: price ? Number(price) : null,
             subject: listing_type === "Tutorat" ? subject || null : null,
             level: listing_type === "Tutorat" ? level || null : null,

@@ -34,10 +34,10 @@ function CommunityPage() {
   });
 
   function setCat(c?: AgentKey) {
-    navigate({ search: (p) => ({ ...p, category: c }) });
+    navigate({ search: (p: typeof sp) => ({ ...p, category: c }) });
   }
   function setCtx(c?: "loisirs" | "professionnel") {
-    navigate({ search: (p) => ({ ...p, context: c }) });
+    navigate({ search: (p: typeof sp) => ({ ...p, context: c }) });
   }
 
   const posts = (data?.posts ?? []) as CommunityPost[];

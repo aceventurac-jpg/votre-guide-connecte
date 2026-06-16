@@ -14,8 +14,10 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedListingsRouteImport } from './routes/_authenticated/listings'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
+import { Route as AuthenticatedCommunityRouteImport } from './routes/_authenticated/community'
 import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
 import { Route as AuthenticatedListingsIdRouteImport } from './routes/_authenticated/listings.$id'
+import { Route as AuthenticatedCommunityIdRouteImport } from './routes/_authenticated/community.$id'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -41,6 +43,11 @@ const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCommunityRoute = AuthenticatedCommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -51,21 +58,31 @@ const AuthenticatedListingsIdRoute = AuthenticatedListingsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthenticatedListingsRoute,
 } as any)
+const AuthenticatedCommunityIdRoute =
+  AuthenticatedCommunityIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedCommunityRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof AuthenticatedChatRoute
+  '/community': typeof AuthenticatedCommunityRouteWithChildren
   '/history': typeof AuthenticatedHistoryRoute
   '/listings': typeof AuthenticatedListingsRouteWithChildren
+  '/community/$id': typeof AuthenticatedCommunityIdRoute
   '/listings/$id': typeof AuthenticatedListingsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/chat': typeof AuthenticatedChatRoute
+  '/community': typeof AuthenticatedCommunityRouteWithChildren
   '/history': typeof AuthenticatedHistoryRoute
   '/listings': typeof AuthenticatedListingsRouteWithChildren
+  '/community/$id': typeof AuthenticatedCommunityIdRoute
   '/listings/$id': typeof AuthenticatedListingsIdRoute
 }
 export interface FileRoutesById {
@@ -74,8 +91,10 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/chat': typeof AuthenticatedChatRoute
+  '/_authenticated/community': typeof AuthenticatedCommunityRouteWithChildren
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/listings': typeof AuthenticatedListingsRouteWithChildren
+  '/_authenticated/community/$id': typeof AuthenticatedCommunityIdRoute
   '/_authenticated/listings/$id': typeof AuthenticatedListingsIdRoute
 }
 export interface FileRouteTypes {
@@ -84,19 +103,31 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/chat'
+    | '/community'
     | '/history'
     | '/listings'
+    | '/community/$id'
     | '/listings/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/chat' | '/history' | '/listings' | '/listings/$id'
+  to:
+    | '/'
+    | '/auth'
+    | '/chat'
+    | '/community'
+    | '/history'
+    | '/listings'
+    | '/community/$id'
+    | '/listings/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/chat'
+    | '/_authenticated/community'
     | '/_authenticated/history'
     | '/_authenticated/listings'
+    | '/_authenticated/community/$id'
     | '/_authenticated/listings/$id'
   fileRoutesById: FileRoutesById
 }
@@ -143,6 +174,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHistoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/community': {
+      id: '/_authenticated/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof AuthenticatedCommunityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/chat': {
       id: '/_authenticated/chat'
       path: '/chat'
@@ -157,8 +195,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedListingsIdRouteImport
       parentRoute: typeof AuthenticatedListingsRoute
     }
+    '/_authenticated/community/$id': {
+      id: '/_authenticated/community/$id'
+      path: '/$id'
+      fullPath: '/community/$id'
+      preLoaderRoute: typeof AuthenticatedCommunityIdRouteImport
+      parentRoute: typeof AuthenticatedCommunityRoute
+    }
   }
 }
+
+interface AuthenticatedCommunityRouteChildren {
+  AuthenticatedCommunityIdRoute: typeof AuthenticatedCommunityIdRoute
+}
+
+const AuthenticatedCommunityRouteChildren: AuthenticatedCommunityRouteChildren =
+  {
+    AuthenticatedCommunityIdRoute: AuthenticatedCommunityIdRoute,
+  }
+
+const AuthenticatedCommunityRouteWithChildren =
+  AuthenticatedCommunityRoute._addFileChildren(
+    AuthenticatedCommunityRouteChildren,
+  )
 
 interface AuthenticatedListingsRouteChildren {
   AuthenticatedListingsIdRoute: typeof AuthenticatedListingsIdRoute
@@ -175,12 +234,14 @@ const AuthenticatedListingsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedChatRoute: typeof AuthenticatedChatRoute
+  AuthenticatedCommunityRoute: typeof AuthenticatedCommunityRouteWithChildren
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
   AuthenticatedListingsRoute: typeof AuthenticatedListingsRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedChatRoute: AuthenticatedChatRoute,
+  AuthenticatedCommunityRoute: AuthenticatedCommunityRouteWithChildren,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
   AuthenticatedListingsRoute: AuthenticatedListingsRouteWithChildren,
 }

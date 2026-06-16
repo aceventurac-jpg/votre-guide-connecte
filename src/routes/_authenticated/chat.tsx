@@ -125,7 +125,7 @@ function ChatPage() {
                       content={m.message}
                       onShare={
                         agent && agent !== "general"
-                          ? () => share.mutate({ category: agent, content: m.message.slice(0, 1800) })
+                          ? () => setShareState({ open: true, category: agent as Exclude<AgentKey, "general">, content: m.message.slice(0, 1800) })
                           : undefined
                       }
                     />

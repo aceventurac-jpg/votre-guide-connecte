@@ -36,8 +36,10 @@ export const sendChatMessage = createServerFn({ method: "POST" })
     const gateway = createLovableAiGatewayProvider(apiKey);
     const model = gateway("google/gemini-3-flash-preview");
 
-    let profile: { name?: string | null; city?: string | null; country?: string | null; profile_type?: string | null } | null = null;
-    let prefs: { interests?: string[] | null; travel_style?: string | null; budget?: string | null; family_status?: string | null; traveler_type?: string | null } | null = null;
+    type Profile = { name?: string | null; city?: string | null; country?: string | null; profile_type?: string | null };
+    type Prefs = { interests?: string[] | null; travel_style?: string | null; budget?: string | null; family_status?: string | null; traveler_type?: string | null };
+    let profile: Profile | null = null;
+    let prefs: Prefs | null = null;
     let recent: { role: string; message: string }[] = [];
 
     if (userId) {
@@ -46,8 +48,8 @@ export const sendChatMessage = createServerFn({ method: "POST" })
         sb.from("user_preferences").select("*").eq("user_id", userId).maybeSingle(),
         sb.from("conversations").select("role, message, agent_used").eq("user_id", userId).order("created_at", { ascending: false }).limit(12),
       ]);
-      profile = p as typeof profile;
-      prefs = pr as typeof prefs;
+      profile = (p as Profile | null) ?? null;
+      prefs = (pr as Prefs | null) ?? null;
       recent = (history ?? []).reverse();
       await sb.from("conversations").insert({ user_id: userId, role: "user", message: data.message });
     }

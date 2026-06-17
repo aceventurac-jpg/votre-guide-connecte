@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { tryGetUser, getAnonClient } from "@/lib/supabase-public.server";
 import { z } from "zod";
 
 const VALID_AGENTS = [
@@ -19,12 +20,14 @@ const SendInput = z.object({
 });
 
 export const sendChatMessage = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => SendInput.parse(input))
-  .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
+  .handler(async ({ data }) => {
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) throw new Error("Configuration IA manquante.");
+
+    const auth = await tryGetUser();
+    const sb = auth?.supabase ?? getAnonClient();
+    const userId = auth?.userId ?? null;
 
     const { generateText } = await import("ai");
     const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
@@ -33,34 +36,26 @@ export const sendChatMessage = createServerFn({ method: "POST" })
     const gateway = createLovableAiGatewayProvider(apiKey);
     const model = gateway("google/gemini-3-flash-preview");
 
-    const [{ data: profile }, { data: prefs }, { data: history }] = await Promise.all([
-      supabase.from("profiles").select("name, city, country, profile_type").eq("id", userId).maybeSingle(),
-      supabase.from("user_preferences").select("*").eq("user_id", userId).maybeSingle(),
-      supabase
-        .from("conversations")
-        .select("role, message, agent_used")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(12),
-    ]);
+    let profile: { name?: string | null; city?: string | null; country?: string | null; profile_type?: string | null } | null = null;
+    let prefs: { interests?: string[] | null; travel_style?: string | null; budget?: string | null; family_status?: string | null; traveler_type?: string | null } | null = null;
+    let recent: { role: string; message: string }[] = [];
 
-    const recent = (history ?? []).reverse();
+    if (userId) {
+      const [{ data: p }, { data: pr }, { data: history }] = await Promise.all([
+        sb.from("profiles").select("name, city, country, profile_type").eq("id", userId).maybeSingle(),
+        sb.from("user_preferences").select("*").eq("user_id", userId).maybeSingle(),
+        sb.from("conversations").select("role, message, agent_used").eq("user_id", userId).order("created_at", { ascending: false }).limit(12),
+      ]);
+      profile = p as typeof profile;
+      prefs = pr as typeof prefs;
+      recent = (history ?? []).reverse();
+      await sb.from("conversations").insert({ user_id: userId, role: "user", message: data.message });
+    }
 
-    await supabase.from("conversations").insert({
-      user_id: userId,
-      role: "user",
-      message: data.message,
-    });
-
-    // Agent : préféré (bulle cliquée) sinon orchestrateur
     let agent: AgentKey = data.preferred_agent ?? "general";
     if (!data.preferred_agent) {
       try {
-        const detect = await generateText({
-          model,
-          system: ORCHESTRATOR_PROMPT,
-          prompt: data.message,
-        });
+        const detect = await generateText({ model, system: ORCHESTRATOR_PROMPT, prompt: data.message });
         const raw = detect.text.trim().toLowerCase().replace(/[^a-z_]/g, "");
         if ((VALID_AGENTS as readonly string[]).includes(raw)) agent = raw as AgentKey;
       } catch (e) {
@@ -68,10 +63,9 @@ export const sendChatMessage = createServerFn({ method: "POST" })
       }
     }
 
-    // 4) Agent spécialisé répond
     const profileLine = profile
       ? `Profil utilisateur : ${profile.name || "inconnu"}${profile.city ? `, ${profile.city}` : ""}${profile.country ? ` (${profile.country})` : ""}, type : ${profile.profile_type ?? "particulier"}.`
-      : "";
+      : "Profil utilisateur : visiteur non connecté.";
     const prefsLine = prefs
       ? `Préférences : ${[
           prefs.interests?.length ? `intérêts ${prefs.interests.join(", ")}` : "",
@@ -79,9 +73,7 @@ export const sendChatMessage = createServerFn({ method: "POST" })
           prefs.budget ? `budget ${prefs.budget}` : "",
           prefs.family_status ? `situation ${prefs.family_status}` : "",
           prefs.traveler_type ? `voyageur ${prefs.traveler_type}` : "",
-        ]
-          .filter(Boolean)
-          .join(" ; ")}.`
+        ].filter(Boolean).join(" ; ")}.`
       : "";
 
     const systemPrompt = `${AGENT_PROMPTS[agent]}\n\n${profileLine}\n${prefsLine}`.trim();
@@ -96,11 +88,7 @@ export const sendChatMessage = createServerFn({ method: "POST" })
 
     let answer: string;
     try {
-      const result = await generateText({
-        model,
-        system: systemPrompt,
-        messages: conv,
-      });
+      const result = await generateText({ model, system: systemPrompt, messages: conv });
       answer = result.text.trim();
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -109,14 +97,11 @@ export const sendChatMessage = createServerFn({ method: "POST" })
       throw new Error("L'IA est temporairement indisponible.");
     }
 
-    await supabase.from("conversations").insert({
-      user_id: userId,
-      role: "assistant",
-      message: answer,
-      agent_used: agent,
-    });
+    if (userId) {
+      await sb.from("conversations").insert({ user_id: userId, role: "assistant", message: answer, agent_used: agent });
+    }
 
-    return { reply: answer, agent };
+    return { reply: answer, agent, persisted: !!userId };
   });
 
 export const getChatHistory = createServerFn({ method: "GET" })

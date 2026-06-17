@@ -23,7 +23,7 @@ export const Route = createFileRoute("/chat")({
 
 function ChatPage() {
   const qc = useQueryClient();
-  const search = useSearch({ from: "/_authenticated/chat" });
+  const search = useSearch({ from: "/chat" });
   const preferred = search.agent as AgentKey | undefined;
   const fetchHistory = useServerFn(getChatHistory);
   const sendFn = useServerFn(sendChatMessage);

@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ArrowLeft, ShieldCheck, Star, Flag, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/listings/$id")({
+export const Route = createFileRoute("/listings/$id")({
   head: () => ({ meta: [{ title: "Annonce — Assistant Citoyen" }] }),
   component: ListingDetail,
 });

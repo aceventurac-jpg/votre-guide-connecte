@@ -11,7 +11,7 @@ import { AGENT_META, type AgentKey } from "@/lib/agent-meta";
 import { Heart, MessageSquare, ArrowLeft, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/community/$id")({
+export const Route = createFileRoute("/community/$id")({
   head: () => ({ meta: [{ title: "Publication — Communauté" }] }),
   component: PostDetail,
 });

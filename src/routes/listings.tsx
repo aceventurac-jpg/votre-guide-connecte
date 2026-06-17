@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Star, ShieldCheck, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/listings")({
+export const Route = createFileRoute("/listings")({
   head: () => ({ meta: [{ title: "Annonces — Assistant Citoyen" }] }),
   component: ListingsPage,
 });

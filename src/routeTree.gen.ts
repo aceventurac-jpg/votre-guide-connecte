@@ -9,16 +9,31 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ListingsRouteImport } from './routes/listings'
+import { Route as CommunityRouteImport } from './routes/community'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedListingsRouteImport } from './routes/_authenticated/listings'
+import { Route as ListingsIdRouteImport } from './routes/listings.$id'
+import { Route as CommunityIdRouteImport } from './routes/community.$id'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
-import { Route as AuthenticatedCommunityRouteImport } from './routes/_authenticated/community'
-import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
-import { Route as AuthenticatedListingsIdRouteImport } from './routes/_authenticated/listings.$id'
-import { Route as AuthenticatedCommunityIdRouteImport } from './routes/_authenticated/community.$id'
 
+const ListingsRoute = ListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityRoute = CommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -33,69 +48,53 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedListingsRoute = AuthenticatedListingsRouteImport.update({
-  id: '/listings',
-  path: '/listings',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const ListingsIdRoute = ListingsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ListingsRoute,
+} as any)
+const CommunityIdRoute = CommunityIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CommunityRoute,
 } as any)
 const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
   id: '/history',
   path: '/history',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedCommunityRoute = AuthenticatedCommunityRouteImport.update({
-  id: '/community',
-  path: '/community',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedListingsIdRoute = AuthenticatedListingsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AuthenticatedListingsRoute,
-} as any)
-const AuthenticatedCommunityIdRoute =
-  AuthenticatedCommunityIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedCommunityRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/chat': typeof AuthenticatedChatRoute
-  '/community': typeof AuthenticatedCommunityRouteWithChildren
+  '/chat': typeof ChatRoute
+  '/community': typeof CommunityRouteWithChildren
+  '/listings': typeof ListingsRouteWithChildren
   '/history': typeof AuthenticatedHistoryRoute
-  '/listings': typeof AuthenticatedListingsRouteWithChildren
-  '/community/$id': typeof AuthenticatedCommunityIdRoute
-  '/listings/$id': typeof AuthenticatedListingsIdRoute
+  '/community/$id': typeof CommunityIdRoute
+  '/listings/$id': typeof ListingsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/chat': typeof AuthenticatedChatRoute
-  '/community': typeof AuthenticatedCommunityRouteWithChildren
+  '/chat': typeof ChatRoute
+  '/community': typeof CommunityRouteWithChildren
+  '/listings': typeof ListingsRouteWithChildren
   '/history': typeof AuthenticatedHistoryRoute
-  '/listings': typeof AuthenticatedListingsRouteWithChildren
-  '/community/$id': typeof AuthenticatedCommunityIdRoute
-  '/listings/$id': typeof AuthenticatedListingsIdRoute
+  '/community/$id': typeof CommunityIdRoute
+  '/listings/$id': typeof ListingsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/chat': typeof AuthenticatedChatRoute
-  '/_authenticated/community': typeof AuthenticatedCommunityRouteWithChildren
+  '/chat': typeof ChatRoute
+  '/community': typeof CommunityRouteWithChildren
+  '/listings': typeof ListingsRouteWithChildren
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
-  '/_authenticated/listings': typeof AuthenticatedListingsRouteWithChildren
-  '/_authenticated/community/$id': typeof AuthenticatedCommunityIdRoute
-  '/_authenticated/listings/$id': typeof AuthenticatedListingsIdRoute
+  '/community/$id': typeof CommunityIdRoute
+  '/listings/$id': typeof ListingsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -104,8 +103,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/chat'
     | '/community'
-    | '/history'
     | '/listings'
+    | '/history'
     | '/community/$id'
     | '/listings/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -114,8 +113,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/chat'
     | '/community'
-    | '/history'
     | '/listings'
+    | '/history'
     | '/community/$id'
     | '/listings/$id'
   id:
@@ -123,22 +122,46 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/_authenticated/chat'
-    | '/_authenticated/community'
+    | '/chat'
+    | '/community'
+    | '/listings'
     | '/_authenticated/history'
-    | '/_authenticated/listings'
-    | '/_authenticated/community/$id'
-    | '/_authenticated/listings/$id'
+    | '/community/$id'
+    | '/listings/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ChatRoute: typeof ChatRoute
+  CommunityRoute: typeof CommunityRouteWithChildren
+  ListingsRoute: typeof ListingsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/listings': {
+      id: '/listings'
+      path: '/listings'
+      fullPath: '/listings'
+      preLoaderRoute: typeof ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/community': {
+      id: '/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof CommunityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -160,12 +183,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/listings': {
-      id: '/_authenticated/listings'
-      path: '/listings'
-      fullPath: '/listings'
-      preLoaderRoute: typeof AuthenticatedListingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/listings/$id': {
+      id: '/listings/$id'
+      path: '/$id'
+      fullPath: '/listings/$id'
+      preLoaderRoute: typeof ListingsIdRouteImport
+      parentRoute: typeof ListingsRoute
+    }
+    '/community/$id': {
+      id: '/community/$id'
+      path: '/$id'
+      fullPath: '/community/$id'
+      preLoaderRoute: typeof CommunityIdRouteImport
+      parentRoute: typeof CommunityRoute
     }
     '/_authenticated/history': {
       id: '/_authenticated/history'
@@ -174,85 +204,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHistoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/community': {
-      id: '/_authenticated/community'
-      path: '/community'
-      fullPath: '/community'
-      preLoaderRoute: typeof AuthenticatedCommunityRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/chat': {
-      id: '/_authenticated/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof AuthenticatedChatRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/listings/$id': {
-      id: '/_authenticated/listings/$id'
-      path: '/$id'
-      fullPath: '/listings/$id'
-      preLoaderRoute: typeof AuthenticatedListingsIdRouteImport
-      parentRoute: typeof AuthenticatedListingsRoute
-    }
-    '/_authenticated/community/$id': {
-      id: '/_authenticated/community/$id'
-      path: '/$id'
-      fullPath: '/community/$id'
-      preLoaderRoute: typeof AuthenticatedCommunityIdRouteImport
-      parentRoute: typeof AuthenticatedCommunityRoute
-    }
   }
 }
-
-interface AuthenticatedCommunityRouteChildren {
-  AuthenticatedCommunityIdRoute: typeof AuthenticatedCommunityIdRoute
-}
-
-const AuthenticatedCommunityRouteChildren: AuthenticatedCommunityRouteChildren =
-  {
-    AuthenticatedCommunityIdRoute: AuthenticatedCommunityIdRoute,
-  }
-
-const AuthenticatedCommunityRouteWithChildren =
-  AuthenticatedCommunityRoute._addFileChildren(
-    AuthenticatedCommunityRouteChildren,
-  )
-
-interface AuthenticatedListingsRouteChildren {
-  AuthenticatedListingsIdRoute: typeof AuthenticatedListingsIdRoute
-}
-
-const AuthenticatedListingsRouteChildren: AuthenticatedListingsRouteChildren = {
-  AuthenticatedListingsIdRoute: AuthenticatedListingsIdRoute,
-}
-
-const AuthenticatedListingsRouteWithChildren =
-  AuthenticatedListingsRoute._addFileChildren(
-    AuthenticatedListingsRouteChildren,
-  )
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedChatRoute: typeof AuthenticatedChatRoute
-  AuthenticatedCommunityRoute: typeof AuthenticatedCommunityRouteWithChildren
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
-  AuthenticatedListingsRoute: typeof AuthenticatedListingsRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedChatRoute: AuthenticatedChatRoute,
-  AuthenticatedCommunityRoute: AuthenticatedCommunityRouteWithChildren,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
-  AuthenticatedListingsRoute: AuthenticatedListingsRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface CommunityRouteChildren {
+  CommunityIdRoute: typeof CommunityIdRoute
+}
+
+const CommunityRouteChildren: CommunityRouteChildren = {
+  CommunityIdRoute: CommunityIdRoute,
+}
+
+const CommunityRouteWithChildren = CommunityRoute._addFileChildren(
+  CommunityRouteChildren,
+)
+
+interface ListingsRouteChildren {
+  ListingsIdRoute: typeof ListingsIdRoute
+}
+
+const ListingsRouteChildren: ListingsRouteChildren = {
+  ListingsIdRoute: ListingsIdRoute,
+}
+
+const ListingsRouteWithChildren = ListingsRoute._addFileChildren(
+  ListingsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ChatRoute: ChatRoute,
+  CommunityRoute: CommunityRouteWithChildren,
+  ListingsRoute: ListingsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

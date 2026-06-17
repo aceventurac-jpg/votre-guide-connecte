@@ -16,14 +16,14 @@ const search = z.object({
   context: z.enum(["loisirs", "professionnel"]).optional(),
 });
 
-export const Route = createFileRoute("/_authenticated/community")({
+export const Route = createFileRoute("/community")({
   head: () => ({ meta: [{ title: "Communauté — Assistant Citoyen" }] }),
   validateSearch: search,
   component: CommunityPage,
 });
 
 function CommunityPage() {
-  const sp = useSearch({ from: "/_authenticated/community" });
+  const sp = useSearch({ from: "/community" });
   const navigate = Route.useNavigate();
   const listFn = useServerFn(listPosts);
   const [open, setOpen] = useState(false);

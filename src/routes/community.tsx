@@ -94,7 +94,8 @@ function CommunityPage() {
               <Button variant="link" onClick={publish}>Sois le premier à publier</Button>
             </div>
           )}
-      </div>
+          {posts.map((p) => <CommunityPostCard key={p.id} post={p} />)}
+        </div>
 
       <PublishPostDialog
         open={open}

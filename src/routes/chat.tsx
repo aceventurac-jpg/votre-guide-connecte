@@ -15,7 +15,7 @@ import { PublishPostDialog } from "@/components/PublishPostDialog";
 
 const chatSearch = z.object({ agent: z.enum(AGENT_ORDER as [AgentKey, ...AgentKey[]]).optional() });
 
-export const Route = createFileRoute("/_authenticated/chat")({
+export const Route = createFileRoute("/chat")({
   head: () => ({ meta: [{ title: "Chat — Assistant Citoyen" }] }),
   validateSearch: chatSearch,
   component: ChatPage,

@@ -96,6 +96,7 @@ function CommunityPage() {
           )}
           {posts.map((p) => <CommunityPostCard key={p.id} post={p} />)}
         </div>
+      </div>
 
       <PublishPostDialog
         open={open}

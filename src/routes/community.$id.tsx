@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,7 +8,8 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { listPosts, listComments, addComment, togglePostLike, deletePost, deleteComment } from "@/lib/community.functions";
 import { AGENT_META, type AgentKey } from "@/lib/agent-meta";
-import { Heart, MessageSquare, ArrowLeft, Trash2 } from "lucide-react";
+import { useIsAuthed } from "@/hooks/use-auth";
+import { Heart, MessageSquare, ArrowLeft, Trash2, LogIn } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/community/$id")({
@@ -19,6 +20,8 @@ export const Route = createFileRoute("/community/$id")({
 function PostDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
+  const navigate = useNavigate();
+  const { authed } = useIsAuthed();
   const listFn = useServerFn(listPosts);
   const commentsFn = useServerFn(listComments);
   const addFn = useServerFn(addComment);
@@ -26,6 +29,9 @@ function PostDetail() {
   const delPostFn = useServerFn(deletePost);
   const delCommentFn = useServerFn(deleteComment);
   const [text, setText] = useState("");
+
+  function requireAuth() { if (!authed) { navigate({ to: "/auth" }); return false; } return true; }
+
 
   // Fetch via listPosts (cheap; gives enriched info). Filter client-side.
   const { data: postsData } = useQuery({

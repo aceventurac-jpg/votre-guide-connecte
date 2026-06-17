@@ -318,6 +318,39 @@ export type Database = {
           },
         ]
       }
+      stories: {
+        Row: {
+          allowed_user_ids: string[]
+          category: Database["public"]["Enums"]["post_category"]
+          content: string
+          created_at: string
+          expires_at: string
+          id: string
+          user_id: string
+          visibility: string
+        }
+        Insert: {
+          allowed_user_ids?: string[]
+          category: Database["public"]["Enums"]["post_category"]
+          content: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          user_id: string
+          visibility?: string
+        }
+        Update: {
+          allowed_user_ids?: string[]
+          category?: Database["public"]["Enums"]["post_category"]
+          content?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          user_id?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           budget: string | null

@@ -37,10 +37,10 @@ function CommunityPage() {
   });
 
   function setCat(c?: AgentKey) {
-    navigate({ to: "/community", search: (p) => ({ ...p, category: c }) });
+    navigate({ to: "/community", search: (p: typeof sp) => ({ ...p, category: c }) });
   }
   function setCtx(c?: "loisirs" | "professionnel") {
-    navigate({ to: "/community", search: (p) => ({ ...p, context: c }) });
+    navigate({ to: "/community", search: (p: typeof sp) => ({ ...p, context: c }) });
   }
 
   function publish() {

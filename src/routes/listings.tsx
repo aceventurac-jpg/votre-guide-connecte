@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -9,12 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useIsAuthed } from "@/hooks/use-auth";
 import { Plus, Star, ShieldCheck, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/listings")({
+export const Route = createFileRoute("/listings")({
   head: () => ({ meta: [{ title: "Annonces — Assistant Citoyen" }] }),
   component: ListingsPage,
 });
@@ -23,10 +24,17 @@ function ListingsPage() {
   const qc = useQueryClient();
   const listFn = useServerFn(listListings);
   const createFn = useServerFn(createListing);
+  const { authed } = useIsAuthed();
+  const navigate = useNavigate();
   const [cat, setCat] = useState<string>("all");
   const [type, setType] = useState<string>("all");
   const [ctx, setCtx] = useState<string>("all");
   const [open, setOpen] = useState(false);
+
+  function openPublish() {
+    if (!authed) { navigate({ to: "/auth" }); return; }
+    setOpen(true);
+  }
 
   const { data } = useQuery({
     queryKey: ["listings", cat, type, ctx],
@@ -61,9 +69,7 @@ function ListingsPage() {
             </p>
           </div>
           <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button><Plus className="size-4 mr-1" /> Publier</Button>
-            </DialogTrigger>
+            <Button onClick={openPublish}><Plus className="size-4 mr-1" /> Publier</Button>
             <NewListingDialog onSubmit={(p) => create.mutate(p)} pending={create.isPending} />
           </Dialog>
         </div>

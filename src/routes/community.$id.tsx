@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,10 +8,11 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { listPosts, listComments, addComment, togglePostLike, deletePost, deleteComment } from "@/lib/community.functions";
 import { AGENT_META, type AgentKey } from "@/lib/agent-meta";
-import { Heart, MessageSquare, ArrowLeft, Trash2 } from "lucide-react";
+import { useIsAuthed } from "@/hooks/use-auth";
+import { Heart, MessageSquare, ArrowLeft, Trash2, LogIn } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/community/$id")({
+export const Route = createFileRoute("/community/$id")({
   head: () => ({ meta: [{ title: "Publication — Communauté" }] }),
   component: PostDetail,
 });
@@ -19,6 +20,8 @@ export const Route = createFileRoute("/_authenticated/community/$id")({
 function PostDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
+  const navigate = useNavigate();
+  const { authed } = useIsAuthed();
   const listFn = useServerFn(listPosts);
   const commentsFn = useServerFn(listComments);
   const addFn = useServerFn(addComment);
@@ -26,6 +29,9 @@ function PostDetail() {
   const delPostFn = useServerFn(deletePost);
   const delCommentFn = useServerFn(deleteComment);
   const [text, setText] = useState("");
+
+  function requireAuth() { if (!authed) { navigate({ to: "/auth" }); return false; } return true; }
+
 
   // Fetch via listPosts (cheap; gives enriched info). Filter client-side.
   const { data: postsData } = useQuery({
@@ -100,7 +106,7 @@ function PostDetail() {
           <div className="flex items-center justify-between pt-2 border-t text-xs text-muted-foreground">
             <span>{post.author?.name || "Membre"}{post.author?.city ? ` · ${post.author.city}` : ""}</span>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={() => like.mutate()} className="h-7 px-2 text-xs">
+              <Button variant="ghost" size="sm" onClick={() => requireAuth() && like.mutate()} className="h-7 px-2 text-xs">
                 <Heart className={`size-3.5 mr-1 ${post.liked_by_me ? "fill-current text-accent" : ""}`} /> {post.likes}
               </Button>
               {post.mine && (
@@ -114,13 +120,19 @@ function PostDetail() {
 
         <div className="space-y-3">
           <h2 className="text-sm font-semibold flex items-center gap-2"><MessageSquare className="size-4" /> Commentaires ({comments.length})</h2>
-          <form
-            className="flex gap-2 items-end"
-            onSubmit={(e) => { e.preventDefault(); if (text.trim()) add.mutate(); }}
-          >
-            <Textarea value={text} onChange={(e) => setText(e.target.value)} rows={2} placeholder="Ajouter un commentaire..." className="resize-none" />
-            <Button type="submit" disabled={!text.trim() || add.isPending}>Envoyer</Button>
-          </form>
+          {authed === false ? (
+            <Link to="/auth" className="block">
+              <Button variant="outline" className="w-full"><LogIn className="size-4 mr-2" /> Connecte-toi pour commenter</Button>
+            </Link>
+          ) : (
+            <form
+              className="flex gap-2 items-end"
+              onSubmit={(e) => { e.preventDefault(); if (text.trim() && requireAuth()) add.mutate(); }}
+            >
+              <Textarea value={text} onChange={(e) => setText(e.target.value)} rows={2} placeholder="Ajouter un commentaire..." className="resize-none" />
+              <Button type="submit" disabled={!text.trim() || add.isPending}>Envoyer</Button>
+            </form>
+          )}
           <div className="space-y-2">
             {comments.map((c) => (
               <Card key={c.id} className="p-3 text-sm space-y-1">

@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { getAnonClient, tryGetUser } from "@/lib/supabase-public.server";
 import { z } from "zod";
 
 const CATEGORIES = ["administratif","sante","voyage","services_locaux","commerce_international","apprentissage"] as const;
@@ -121,7 +122,6 @@ export const createPost = createServerFn({ method: "POST" })
   });
 
 export const listPosts = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
     z.object({
       category: z.enum(CATEGORIES).optional(),
@@ -129,8 +129,11 @@ export const listPosts = createServerFn({ method: "POST" })
       limit: z.number().int().min(1).max(50).optional(),
     }).optional().parse(input),
   )
-  .handler(async ({ data, context }) => {
-    let q = context.supabase
+  .handler(async ({ data }) => {
+    const auth = await tryGetUser();
+    const sb = auth?.supabase ?? getAnonClient();
+    const meId = auth?.userId ?? null;
+    let q = sb
       .from("posts")
       .select("id, user_id, category, context, content, created_at")
       .order("created_at", { ascending: false })
@@ -146,9 +149,9 @@ export const listPosts = createServerFn({ method: "POST" })
     const safePostIds = ids.length ? ids : ["00000000-0000-0000-0000-000000000000"];
 
     const [{ data: profs }, { data: likes }, { data: comments }] = await Promise.all([
-      context.supabase.from("profiles").select("id, name, city").in("id", safeUserIds),
-      context.supabase.from("post_likes").select("post_id, user_id").in("post_id", safePostIds),
-      context.supabase.from("post_comments").select("post_id").in("post_id", safePostIds),
+      sb.from("profiles").select("id, name, city").in("id", safeUserIds),
+      sb.from("post_likes").select("post_id, user_id").in("post_id", safePostIds),
+      sb.from("post_comments").select("post_id").in("post_id", safePostIds),
     ]);
 
     const pmap = new Map((profs ?? []).map((p) => [p.id, p]));
@@ -156,7 +159,7 @@ export const listPosts = createServerFn({ method: "POST" })
     const likedByMe = new Set<string>();
     (likes ?? []).forEach((l) => {
       likeCount.set(l.post_id, (likeCount.get(l.post_id) ?? 0) + 1);
-      if (l.user_id === context.userId) likedByMe.add(l.post_id);
+      if (meId && l.user_id === meId) likedByMe.add(l.post_id);
     });
     const commentCount = new Map<string, number>();
     (comments ?? []).forEach((c) => commentCount.set(c.post_id, (commentCount.get(c.post_id) ?? 0) + 1));
@@ -168,7 +171,7 @@ export const listPosts = createServerFn({ method: "POST" })
         likes: likeCount.get(r.id) ?? 0,
         comments: commentCount.get(r.id) ?? 0,
         liked_by_me: likedByMe.has(r.id),
-        mine: r.user_id === context.userId,
+        mine: meId ? r.user_id === meId : false,
       })),
     };
   });
@@ -205,10 +208,11 @@ export const togglePostLike = createServerFn({ method: "POST" })
   });
 
 export const listComments = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ post_id: z.string().uuid() }).parse(input))
-  .handler(async ({ data, context }) => {
-    const { data: rows, error } = await context.supabase
+  .handler(async ({ data }) => {
+    const auth = await tryGetUser();
+    const sb = auth?.supabase ?? getAnonClient();
+    const { data: rows, error } = await sb
       .from("post_comments")
       .select("id, user_id, content, created_at")
       .eq("post_id", data.post_id)
@@ -216,13 +220,13 @@ export const listComments = createServerFn({ method: "POST" })
       .limit(200);
     if (error) throw new Error(error.message);
     const userIds = Array.from(new Set((rows ?? []).map((r) => r.user_id)));
-    const { data: profs } = await context.supabase
+    const { data: profs } = await sb
       .from("profiles")
       .select("id, name")
       .in("id", userIds.length ? userIds : ["00000000-0000-0000-0000-000000000000"]);
     const pmap = new Map((profs ?? []).map((p) => [p.id, p]));
     return {
-      comments: (rows ?? []).map((r) => ({ ...r, author: pmap.get(r.user_id) ?? null, mine: r.user_id === context.userId })),
+      comments: (rows ?? []).map((r) => ({ ...r, author: pmap.get(r.user_id) ?? null, mine: auth ? r.user_id === auth.userId : false })),
     };
   });
 

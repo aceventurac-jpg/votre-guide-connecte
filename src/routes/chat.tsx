@@ -1,4 +1,4 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useSearch, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -7,23 +7,27 @@ import { sendChatMessage, getChatHistory, clearChatHistory } from "@/lib/chat.fu
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Sparkles, Trash2 } from "lucide-react";
+import { Send, Sparkles, Trash2, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { AGENT_META, type AgentKey, AGENT_ORDER } from "@/lib/agent-meta";
 import { AssistantMessage } from "@/components/ChatMessage";
 import { PublishPostDialog } from "@/components/PublishPostDialog";
+import { useIsAuthed } from "@/hooks/use-auth";
 
 const chatSearch = z.object({ agent: z.enum(AGENT_ORDER as [AgentKey, ...AgentKey[]]).optional() });
 
-export const Route = createFileRoute("/_authenticated/chat")({
+export const Route = createFileRoute("/chat")({
   head: () => ({ meta: [{ title: "Chat — Assistant Citoyen" }] }),
   validateSearch: chatSearch,
   component: ChatPage,
 });
 
+type LocalMessage = { id: string; role: "user" | "assistant"; message: string; agent_used: string | null };
+
 function ChatPage() {
   const qc = useQueryClient();
-  const search = useSearch({ from: "/_authenticated/chat" });
+  const { authed } = useIsAuthed();
+  const search = useSearch({ from: "/chat" });
   const preferred = search.agent as AgentKey | undefined;
   const fetchHistory = useServerFn(getChatHistory);
   const sendFn = useServerFn(sendChatMessage);
@@ -31,16 +35,29 @@ function ChatPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
+  const [guestMessages, setGuestMessages] = useState<LocalMessage[]>([]);
   const [shareState, setShareState] = useState<{ open: boolean; category?: Exclude<AgentKey, "general">; content: string }>({ open: false, content: "" });
 
   const { data } = useQuery({
     queryKey: ["chat-history"],
     queryFn: () => fetchHistory(),
+    enabled: authed === true,
   });
 
   const send = useMutation({
-    mutationFn: (message: string) => sendFn({ data: { message, preferred_agent: preferred } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["chat-history"] }),
+    mutationFn: async (message: string) => sendFn({ data: { message, preferred_agent: preferred } }),
+    onMutate: (message) => {
+      if (!authed) {
+        setGuestMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "user", message, agent_used: null }]);
+      }
+    },
+    onSuccess: (res, message) => {
+      if (authed) {
+        qc.invalidateQueries({ queryKey: ["chat-history"] });
+      } else {
+        setGuestMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", message: res.reply, agent_used: res.agent }]);
+      }
+    },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erreur"),
   });
 
@@ -49,7 +66,9 @@ function ChatPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["chat-history"] }),
   });
 
-  const messages = data?.messages ?? [];
+  const messages: LocalMessage[] = authed
+    ? ((data?.messages ?? []) as LocalMessage[])
+    : guestMessages;
   const preferredMeta = preferred ? AGENT_META[preferred] : null;
 
   useEffect(() => {
@@ -75,12 +94,19 @@ function ChatPage() {
                 : "L'orchestrateur choisit automatiquement l'agent adapté."}
             </p>
           </div>
-          {messages.length > 0 && (
+          {authed && messages.length > 0 && (
             <Button variant="ghost" size="sm" onClick={() => clear.mutate()}>
               <Trash2 className="size-4 mr-1" /> Effacer
             </Button>
           )}
         </div>
+
+        {authed === false && (
+          <div className="rounded-xl border border-dashed bg-secondary/40 p-3 text-xs flex items-center justify-between gap-3">
+            <span>Mode invité : tes messages ne seront pas sauvegardés.</span>
+            <Link to="/auth"><Button size="sm" variant="outline"><LogIn className="size-3.5 mr-1" />Créer un compte</Button></Link>
+          </div>
+        )}
 
         {preferredMeta && (
           <div
@@ -124,7 +150,7 @@ function ChatPage() {
                     <AssistantMessage
                       content={m.message}
                       onShare={
-                        agent && agent !== "general"
+                        authed && agent && agent !== "general"
                           ? () => setShareState({ open: true, category: agent as Exclude<AgentKey, "general">, content: m.message.slice(0, 1800) })
                           : undefined
                       }

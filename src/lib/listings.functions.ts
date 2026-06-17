@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { getAnonClient, tryGetUser } from "@/lib/supabase-public.server";
 import { z } from "zod";
 
 export const CATEGORIES = [
@@ -48,10 +49,11 @@ const ListInput = z
   .optional();
 
 export const listListings = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => ListInput.parse(input))
-  .handler(async ({ data, context }) => {
-    let q = context.supabase
+  .handler(async ({ data }) => {
+    const auth = await tryGetUser();
+    const sb = auth?.supabase ?? getAnonClient();
+    let q = sb
       .from("listings")
       .select(
         "id, category, listing_type, context, title, description, price, subject, level, city, created_at, user_id",
@@ -66,9 +68,10 @@ export const listListings = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     const userIds = Array.from(new Set((rows ?? []).map((r) => r.user_id)));
+    const safeIds = userIds.length ? userIds : ["00000000-0000-0000-0000-000000000000"];
     const [{ data: profs }, { data: ratings }] = await Promise.all([
-      context.supabase.from("profiles").select("id, name, city, verified").in("id", userIds.length ? userIds : ["00000000-0000-0000-0000-000000000000"]),
-      context.supabase.from("user_ratings").select("user_id, avg_rating, review_count").in("user_id", userIds.length ? userIds : ["00000000-0000-0000-0000-000000000000"]),
+      sb.from("profiles").select("id, name, city, verified, profile_type").in("id", safeIds),
+      sb.from("user_ratings").select("user_id, avg_rating, review_count").in("user_id", safeIds),
     ]);
     const pmap = new Map((profs ?? []).map((p) => [p.id, p]));
     const rmap = new Map((ratings ?? []).map((r) => [r.user_id, r]));
@@ -82,10 +85,11 @@ export const listListings = createServerFn({ method: "POST" })
   });
 
 export const getListing = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
-  .handler(async ({ data, context }) => {
-    const { data: listing, error } = await context.supabase
+  .handler(async ({ data }) => {
+    const auth = await tryGetUser();
+    const sb = auth?.supabase ?? getAnonClient();
+    const { data: listing, error } = await sb
       .from("listings")
       .select("*")
       .eq("id", data.id)
@@ -93,9 +97,9 @@ export const getListing = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!listing) throw new Error("Annonce introuvable");
     const [{ data: seller }, { data: rating }, { data: reviews }] = await Promise.all([
-      context.supabase.from("profiles").select("id, name, city, verified").eq("id", listing.user_id).maybeSingle(),
-      context.supabase.from("user_ratings").select("avg_rating, review_count").eq("user_id", listing.user_id).maybeSingle(),
-      context.supabase
+      sb.from("profiles").select("id, name, city, verified, profile_type").eq("id", listing.user_id).maybeSingle(),
+      sb.from("user_ratings").select("avg_rating, review_count").eq("user_id", listing.user_id).maybeSingle(),
+      sb
         .from("reviews")
         .select("id, rating, comment, created_at, reviewer_id")
         .eq("listing_id", data.id)

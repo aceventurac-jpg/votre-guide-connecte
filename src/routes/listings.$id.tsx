@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ArrowLeft, ShieldCheck, Star, Flag, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/listings/$id")({
+export const Route = createFileRoute("/listings/$id")({
   head: () => ({ meta: [{ title: "Annonce — Assistant Citoyen" }] }),
   component: ListingDetail,
 });
@@ -134,6 +134,13 @@ function ListingDetail() {
             )}
           </div>
         </Card>
+
+        {!isOwner && !me && (
+          <Card className="p-5 text-center space-y-2">
+            <p className="text-sm">Connecte-toi pour contacter ce membre et laisser un avis.</p>
+            <Link to="/auth"><Button>Se connecter / Créer un compte</Button></Link>
+          </Card>
+        )}
 
         {!isOwner && me && (
           <Card className="p-5 space-y-3">

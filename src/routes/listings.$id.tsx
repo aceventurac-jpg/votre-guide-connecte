@@ -135,6 +135,13 @@ function ListingDetail() {
           </div>
         </Card>
 
+        {!isOwner && !me && (
+          <Card className="p-5 text-center space-y-2">
+            <p className="text-sm">Connecte-toi pour contacter ce membre et laisser un avis.</p>
+            <Link to="/auth"><Button>Se connecter / Créer un compte</Button></Link>
+          </Card>
+        )}
+
         {!isOwner && me && (
           <Card className="p-5 space-y-3">
             <h2 className="font-medium">Messagerie privée</h2>

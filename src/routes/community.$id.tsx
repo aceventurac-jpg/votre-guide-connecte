@@ -106,7 +106,7 @@ function PostDetail() {
           <div className="flex items-center justify-between pt-2 border-t text-xs text-muted-foreground">
             <span>{post.author?.name || "Membre"}{post.author?.city ? ` · ${post.author.city}` : ""}</span>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={() => like.mutate()} className="h-7 px-2 text-xs">
+              <Button variant="ghost" size="sm" onClick={() => requireAuth() && like.mutate()} className="h-7 px-2 text-xs">
                 <Heart className={`size-3.5 mr-1 ${post.liked_by_me ? "fill-current text-accent" : ""}`} /> {post.likes}
               </Button>
               {post.mine && (
@@ -120,13 +120,19 @@ function PostDetail() {
 
         <div className="space-y-3">
           <h2 className="text-sm font-semibold flex items-center gap-2"><MessageSquare className="size-4" /> Commentaires ({comments.length})</h2>
-          <form
-            className="flex gap-2 items-end"
-            onSubmit={(e) => { e.preventDefault(); if (text.trim()) add.mutate(); }}
-          >
-            <Textarea value={text} onChange={(e) => setText(e.target.value)} rows={2} placeholder="Ajouter un commentaire..." className="resize-none" />
-            <Button type="submit" disabled={!text.trim() || add.isPending}>Envoyer</Button>
-          </form>
+          {authed === false ? (
+            <Link to="/auth" className="block">
+              <Button variant="outline" className="w-full"><LogIn className="size-4 mr-2" /> Connecte-toi pour commenter</Button>
+            </Link>
+          ) : (
+            <form
+              className="flex gap-2 items-end"
+              onSubmit={(e) => { e.preventDefault(); if (text.trim() && requireAuth()) add.mutate(); }}
+            >
+              <Textarea value={text} onChange={(e) => setText(e.target.value)} rows={2} placeholder="Ajouter un commentaire..." className="resize-none" />
+              <Button type="submit" disabled={!text.trim() || add.isPending}>Envoyer</Button>
+            </form>
+          )}
           <div className="space-y-2">
             {comments.map((c) => (
               <Card key={c.id} className="p-3 text-sm space-y-1">

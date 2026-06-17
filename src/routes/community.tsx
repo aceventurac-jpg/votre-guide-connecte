@@ -1,4 +1,4 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useSearch, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +9,8 @@ import { listPosts } from "@/lib/community.functions";
 import { AGENT_META, AGENT_ORDER, type AgentKey } from "@/lib/agent-meta";
 import { CommunityPostCard, type CommunityPost } from "@/components/CommunityPostCard";
 import { PublishPostDialog } from "@/components/PublishPostDialog";
+import { StoriesStrip } from "@/components/StoriesStrip";
+import { useIsAuthed } from "@/hooks/use-auth";
 import { Plus, Users } from "lucide-react";
 
 const search = z.object({
@@ -24,8 +26,9 @@ export const Route = createFileRoute("/community")({
 
 function CommunityPage() {
   const sp = useSearch({ from: "/community" });
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate();
   const listFn = useServerFn(listPosts);
+  const { authed } = useIsAuthed();
   const [open, setOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
@@ -34,10 +37,15 @@ function CommunityPage() {
   });
 
   function setCat(c?: AgentKey) {
-    navigate({ search: (p: typeof sp) => ({ ...p, category: c }) });
+    navigate({ to: "/community", search: (p) => ({ ...p, category: c }) });
   }
   function setCtx(c?: "loisirs" | "professionnel") {
-    navigate({ search: (p: typeof sp) => ({ ...p, context: c }) });
+    navigate({ to: "/community", search: (p) => ({ ...p, context: c }) });
+  }
+
+  function publish() {
+    if (!authed) { navigate({ to: "/auth" }); return; }
+    setOpen(true);
   }
 
   const posts = (data?.posts ?? []) as CommunityPost[];
@@ -52,8 +60,10 @@ function CommunityPage() {
             </h1>
             <p className="text-sm text-muted-foreground">Questions, conseils et retours d'expérience partagés par les membres.</p>
           </div>
-          <Button onClick={() => setOpen(true)}><Plus className="size-4 mr-1" /> Publier</Button>
+          <Button onClick={publish}><Plus className="size-4 mr-1" /> Publier</Button>
         </div>
+
+        <StoriesStrip category={sp.category} />
 
         <div className="space-y-2">
           <div className="flex flex-wrap gap-1.5">
@@ -81,11 +91,9 @@ function CommunityPage() {
           {!isLoading && posts.length === 0 && (
             <div className="text-center py-12 text-muted-foreground border border-dashed rounded-2xl">
               <p>Pas encore de publication.</p>
-              <Button variant="link" onClick={() => setOpen(true)}>Sois le premier à publier</Button>
+              <Button variant="link" onClick={publish}>Sois le premier à publier</Button>
             </div>
           )}
-          {posts.map((p) => <CommunityPostCard key={p.id} post={p} />)}
-        </div>
       </div>
 
       <PublishPostDialog

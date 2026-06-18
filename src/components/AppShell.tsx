@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Sparkles, MessageCircle, Users, Store, History, LogOut, LogIn } from "lucide-react";
+import { Sparkles, MessageCircle, Users, Store, History, LogOut, LogIn, Home, BookOpen, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";

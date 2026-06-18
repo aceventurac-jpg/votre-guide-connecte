@@ -109,12 +109,13 @@ export const createPost = createServerFn({ method: "POST" })
       category: z.enum(CATEGORIES),
       context: z.enum(CONTEXTS).default("loisirs"),
       content: z.string().trim().min(1).max(2000),
+      city: z.string().trim().max(80).optional(),
     }).parse(input),
   )
   .handler(async ({ data, context }) => {
     const { error, data: row } = await context.supabase
       .from("posts")
-      .insert({ ...data, user_id: context.userId })
+      .insert({ ...data, user_id: context.userId, city: data.city ?? null })
       .select("id")
       .single();
     if (error) throw new Error(error.message);

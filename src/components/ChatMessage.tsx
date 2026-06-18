@@ -2,7 +2,8 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, Share2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Share2, ExternalLink } from "lucide-react";
+import { findOfficialLink } from "@/lib/official-links";
 
 /**
  * Découpe le markdown en (résumé avant le premier ## , reste).

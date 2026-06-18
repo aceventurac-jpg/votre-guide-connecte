@@ -135,7 +135,7 @@ function ListingsPage() {
                         <Star className="size-3 fill-accent text-accent" /> {Number(l.rating.avg_rating).toFixed(1)}
                       </span>
                     )}
-                    {l.price != null && <span className="text-sm font-semibold">{Number(l.price).toFixed(2)} €</span>}
+                    {l.is_free ? <span className="text-sm font-semibold text-emerald-600">Gratuit</span> : (l.price != null && <span className="text-sm font-semibold">{Number(l.price).toFixed(2)} €</span>)}
                   </div>
                 </div>
               </Card>

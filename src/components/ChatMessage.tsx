@@ -50,9 +50,20 @@ export function AssistantMessage({
 }) {
   const [open, setOpen] = useState(false);
   const { summary, rest } = splitSummary(content);
+  const officialLink = findOfficialLink(content);
 
   return (
     <div className="space-y-2">
+      {officialLink && (
+        <a
+          href={officialLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition"
+        >
+          <ExternalLink className="size-3.5" /> Ouvrir le site officiel
+        </a>
+      )}
       <MarkdownBlock>{summary || content}</MarkdownBlock>
       {rest && (
         <>

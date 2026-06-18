@@ -159,6 +159,7 @@ type CreatePayload = {
   title: string;
   description: string;
   price?: number | null;
+  is_free?: boolean;
   subject?: string | null;
   level?: string | null;
   city?: string | null;
@@ -171,6 +172,7 @@ function NewListingDialog({ onSubmit, pending }: { onSubmit: (p: CreatePayload) 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [isFree, setIsFree] = useState(false);
   const [subject, setSubject] = useState("");
   const [level, setLevel] = useState("");
   const [city, setCity] = useState("");

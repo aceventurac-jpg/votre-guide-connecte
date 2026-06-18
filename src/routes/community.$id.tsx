@@ -96,7 +96,7 @@ function PostDetail() {
 
         <Card className="p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: meta.color, color: meta.accent }}>
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-secondary">
               <Icon className="size-3" /> {meta.label}
             </span>
             <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">

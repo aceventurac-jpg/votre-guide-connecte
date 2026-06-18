@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Sparkles, MessageCircle, Users, Store, History, LogOut, LogIn } from "lucide-react";
+import { Sparkles, MessageCircle, Users, Store, History, LogOut, LogIn, Home, BookOpen, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ const NAV = [
   { to: "/chat", label: "Chat", icon: MessageCircle, authOnly: false },
   { to: "/community", label: "Communauté", icon: Users, authOnly: false },
   { to: "/listings", label: "Annonces", icon: Store, authOnly: false },
+  { to: "/recipes", label: "Recettes", icon: BookOpen, authOnly: true },
+  { to: "/goals", label: "Objectifs", icon: Target, authOnly: true },
   { to: "/history", label: "Historique", icon: History, authOnly: true },
 ] as const;
 
@@ -69,6 +71,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <main className="flex-1 flex flex-col">{children}</main>
+      {location.pathname !== "/" && (
+        <Link
+          to="/"
+          aria-label="Retour à l'accueil"
+          className="fixed bottom-5 right-5 z-20 size-12 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 inline-flex items-center justify-center hover:scale-105 transition"
+        >
+          <Home className="size-5" />
+        </Link>
+      )}
     </div>
   );
 }

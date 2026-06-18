@@ -1,4 +1,4 @@
-import { FileText, Stethoscope, Plane, Wrench, Globe2, GraduationCap, Sparkles, type LucideIcon } from "lucide-react";
+import { FileText, Stethoscope, Plane, Wrench, Globe2, GraduationCap, Sparkles, HandHeart, PawPrint, ChefHat, type LucideIcon } from "lucide-react";
 
 export type AgentKey =
   | "administratif" | "sante" | "voyage"
@@ -51,4 +51,28 @@ export const AGENT_META: Record<AgentKey, {
 
 export const AGENT_ORDER: AgentKey[] = [
   "administratif","sante","voyage","services_locaux","commerce_international","apprentissage",
+];
+
+// Catégories de posts communautaires (inclut les univers ci-dessus + des univers
+// purement communautaires qui ne correspondent pas à un agent IA dédié).
+export type PostCategoryKey =
+  | "administratif" | "sante" | "voyage" | "services_locaux"
+  | "commerce_international" | "apprentissage"
+  | "entraide" | "animaux" | "cuisine";
+
+export const POST_CATEGORY_META: Record<PostCategoryKey, { label: string; icon: LucideIcon }> = {
+  administratif: { label: "Administratif", icon: FileText },
+  sante: { label: "Santé & Sport", icon: Stethoscope },
+  voyage: { label: "Voyage", icon: Plane },
+  services_locaux: { label: "Services Locaux", icon: Wrench },
+  commerce_international: { label: "Commerce Int.", icon: Globe2 },
+  apprentissage: { label: "Apprentissage", icon: GraduationCap },
+  entraide: { label: "Entraide locale", icon: HandHeart },
+  animaux: { label: "Animaux", icon: PawPrint },
+  cuisine: { label: "Cuisine", icon: ChefHat },
+};
+
+export const POST_CATEGORY_ORDER: PostCategoryKey[] = [
+  "administratif","sante","voyage","services_locaux","commerce_international",
+  "apprentissage","entraide","animaux","cuisine",
 ];

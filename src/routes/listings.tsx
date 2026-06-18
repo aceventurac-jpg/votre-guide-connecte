@@ -135,7 +135,7 @@ function ListingsPage() {
                         <Star className="size-3 fill-accent text-accent" /> {Number(l.rating.avg_rating).toFixed(1)}
                       </span>
                     )}
-                    {l.price != null && <span className="text-sm font-semibold">{Number(l.price).toFixed(2)} €</span>}
+                    {l.is_free ? <span className="text-sm font-semibold text-emerald-600">Gratuit</span> : (l.price != null && <span className="text-sm font-semibold">{Number(l.price).toFixed(2)} €</span>)}
                   </div>
                 </div>
               </Card>
@@ -159,6 +159,7 @@ type CreatePayload = {
   title: string;
   description: string;
   price?: number | null;
+  is_free?: boolean;
   subject?: string | null;
   level?: string | null;
   city?: string | null;
@@ -171,6 +172,7 @@ function NewListingDialog({ onSubmit, pending }: { onSubmit: (p: CreatePayload) 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [isFree, setIsFree] = useState(false);
   const [subject, setSubject] = useState("");
   const [level, setLevel] = useState("");
   const [city, setCity] = useState("");
@@ -182,9 +184,11 @@ function NewListingDialog({ onSubmit, pending }: { onSubmit: (p: CreatePayload) 
         className="space-y-3"
         onSubmit={(e) => {
           e.preventDefault();
+          const effectiveFree = isFree || listing_type === "Troc/Don";
           onSubmit({
             category, listing_type, context: ctx, title, description,
-            price: price ? Number(price) : null,
+            price: effectiveFree ? null : (price ? Number(price) : null),
+            is_free: effectiveFree,
             subject: listing_type === "Tutorat" ? subject || null : null,
             level: listing_type === "Tutorat" ? level || null : null,
             city: city || null,
@@ -228,13 +232,22 @@ function NewListingDialog({ onSubmit, pending }: { onSubmit: (p: CreatePayload) 
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label>Prix (€)</Label>
-            <Input type="number" min={0} step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
+            <Input
+              type="number" min={0} step="0.01" value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              disabled={isFree || listing_type === "Troc/Don"}
+              placeholder={listing_type === "Troc/Don" ? "Gratuit" : ""}
+            />
           </div>
           <div>
             <Label>Ville</Label>
             <Input value={city} onChange={(e) => setCity(e.target.value)} />
           </div>
         </div>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={isFree || listing_type === "Troc/Don"} disabled={listing_type === "Troc/Don"} onChange={(e) => setIsFree(e.target.checked)} />
+          Gratuit (don)
+        </label>
         {listing_type === "Tutorat" && (
           <div className="grid grid-cols-2 gap-3">
             <div>

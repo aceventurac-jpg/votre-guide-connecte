@@ -2,7 +2,8 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, Share2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Share2, ExternalLink } from "lucide-react";
+import { findOfficialLink } from "@/lib/official-links";
 
 /**
  * Découpe le markdown en (résumé avant le premier ## , reste).
@@ -49,9 +50,20 @@ export function AssistantMessage({
 }) {
   const [open, setOpen] = useState(false);
   const { summary, rest } = splitSummary(content);
+  const officialLink = findOfficialLink(content);
 
   return (
     <div className="space-y-2">
+      {officialLink && (
+        <a
+          href={officialLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition"
+        >
+          <ExternalLink className="size-3.5" /> Ouvrir le site officiel
+        </a>
+      )}
       <MarkdownBlock>{summary || content}</MarkdownBlock>
       {rest && (
         <>

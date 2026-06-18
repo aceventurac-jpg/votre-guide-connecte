@@ -41,6 +41,36 @@ export type Database = {
         }
         Relationships: []
       }
+      goals: {
+        Row: {
+          created_at: string
+          deadline: string | null
+          id: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       listings: {
         Row: {
           active: boolean
@@ -50,6 +80,7 @@ export type Database = {
           created_at: string
           description: string
           id: string
+          is_free: boolean
           level: string | null
           listing_type: Database["public"]["Enums"]["listing_type"]
           price: number | null
@@ -65,6 +96,7 @@ export type Database = {
           created_at?: string
           description: string
           id?: string
+          is_free?: boolean
           level?: string | null
           listing_type: Database["public"]["Enums"]["listing_type"]
           price?: number | null
@@ -80,6 +112,7 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          is_free?: boolean
           level?: string | null
           listing_type?: Database["public"]["Enums"]["listing_type"]
           price?: number | null
@@ -188,6 +221,7 @@ export type Database = {
       posts: {
         Row: {
           category: Database["public"]["Enums"]["post_category"]
+          city: string | null
           content: string
           context: Database["public"]["Enums"]["context_type"]
           created_at: string
@@ -196,6 +230,7 @@ export type Database = {
         }
         Insert: {
           category: Database["public"]["Enums"]["post_category"]
+          city?: string | null
           content: string
           context?: Database["public"]["Enums"]["context_type"]
           created_at?: string
@@ -204,6 +239,7 @@ export type Database = {
         }
         Update: {
           category?: Database["public"]["Enums"]["post_category"]
+          city?: string | null
           content?: string
           context?: Database["public"]["Enums"]["context_type"]
           created_at?: string
@@ -245,6 +281,36 @@ export type Database = {
           profile_type?: Database["public"]["Enums"]["profile_type"] | null
           updated_at?: string
           verified?: boolean
+        }
+        Relationships: []
+      }
+      recipes: {
+        Row: {
+          created_at: string
+          id: string
+          ingredients: string[]
+          steps: string[]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ingredients?: string[]
+          steps?: string[]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ingredients?: string[]
+          steps?: string[]
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -412,7 +478,17 @@ export type Database = {
         | "Services Locaux"
         | "Commerce International"
         | "Apprentissage"
-      listing_type: "Vente" | "Location" | "Covoiturage" | "Service" | "Tutorat"
+        | "Scolaire"
+        | "Vêtements"
+        | "Jouets"
+        | "Animaux"
+      listing_type:
+        | "Vente"
+        | "Location"
+        | "Covoiturage"
+        | "Service"
+        | "Tutorat"
+        | "Troc/Don"
       message_role: "user" | "assistant"
       post_category:
         | "administratif"
@@ -421,6 +497,9 @@ export type Database = {
         | "services_locaux"
         | "commerce_international"
         | "apprentissage"
+        | "entraide"
+        | "animaux"
+        | "cuisine"
       profile_type:
         | "particulier"
         | "etudiant"
@@ -575,8 +654,19 @@ export const Constants = {
         "Services Locaux",
         "Commerce International",
         "Apprentissage",
+        "Scolaire",
+        "Vêtements",
+        "Jouets",
+        "Animaux",
       ],
-      listing_type: ["Vente", "Location", "Covoiturage", "Service", "Tutorat"],
+      listing_type: [
+        "Vente",
+        "Location",
+        "Covoiturage",
+        "Service",
+        "Tutorat",
+        "Troc/Don",
+      ],
       message_role: ["user", "assistant"],
       post_category: [
         "administratif",
@@ -585,6 +675,9 @@ export const Constants = {
         "services_locaux",
         "commerce_international",
         "apprentissage",
+        "entraide",
+        "animaux",
+        "cuisine",
       ],
       profile_type: [
         "particulier",

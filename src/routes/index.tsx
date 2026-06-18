@@ -78,11 +78,12 @@ function Landing() {
               <h3 className="font-semibold flex items-center gap-2"><Users className="size-4 text-accent" /> Derniers échanges communauté</h3>
               <div className="space-y-2">
                 {(data?.posts ?? []).map((p) => {
-                  const meta = AGENT_META[p.category as AgentKey] ?? AGENT_META.general;
+                  const m = AGENT_META[p.category as AgentKey];
+                  const label = m?.label ?? p.category;
                   return (
                     <Link key={p.id} to="/community/$id" params={{ id: p.id }}>
                       <Card className="p-3 hover:border-accent transition">
-                        <div className="text-[11px] mb-1" style={{ color: meta.accent }}>{meta.label}</div>
+                        <div className="text-[11px] mb-1 text-accent">{label}</div>
                         <p className="text-sm line-clamp-2">{p.content}</p>
                       </Card>
                     </Link>

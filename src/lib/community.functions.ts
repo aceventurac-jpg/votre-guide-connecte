@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getAnonClient, tryGetUser } from "@/lib/supabase-public.server";
 import { z } from "zod";
 
-const CATEGORIES = ["administratif","sante","voyage","services_locaux","commerce_international","apprentissage"] as const;
+const CATEGORIES = ["administratif","sante","voyage","services_locaux","commerce_international","apprentissage","entraide","animaux","cuisine"] as const;
 const CONTEXTS = ["loisirs","professionnel"] as const;
 
 // ---------- Messagerie interne ----------
@@ -109,12 +109,13 @@ export const createPost = createServerFn({ method: "POST" })
       category: z.enum(CATEGORIES),
       context: z.enum(CONTEXTS).default("loisirs"),
       content: z.string().trim().min(1).max(2000),
+      city: z.string().trim().max(80).optional(),
     }).parse(input),
   )
   .handler(async ({ data, context }) => {
     const { error, data: row } = await context.supabase
       .from("posts")
-      .insert({ ...data, user_id: context.userId })
+      .insert({ ...data, user_id: context.userId, city: data.city ?? null })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
@@ -126,6 +127,7 @@ export const listPosts = createServerFn({ method: "POST" })
     z.object({
       category: z.enum(CATEGORIES).optional(),
       context: z.enum(CONTEXTS).optional(),
+      city: z.string().trim().max(80).optional(),
       limit: z.number().int().min(1).max(50).optional(),
     }).optional().parse(input),
   )
@@ -135,11 +137,12 @@ export const listPosts = createServerFn({ method: "POST" })
     const meId = auth?.userId ?? null;
     let q = sb
       .from("posts")
-      .select("id, user_id, category, context, content, created_at")
+      .select("id, user_id, category, context, city, content, created_at")
       .order("created_at", { ascending: false })
       .limit(data?.limit ?? 50);
     if (data?.category) q = q.eq("category", data.category);
     if (data?.context) q = q.eq("context", data.context);
+    if (data?.city) q = q.ilike("city", `%${data.city}%`);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
 

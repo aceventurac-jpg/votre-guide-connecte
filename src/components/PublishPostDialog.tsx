@@ -2,15 +2,14 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AGENT_META, AGENT_ORDER, type AgentKey } from "@/lib/agent-meta";
+import { POST_CATEGORY_META, POST_CATEGORY_ORDER, type PostCategoryKey } from "@/lib/agent-meta";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPost } from "@/lib/community.functions";
 import { toast } from "sonner";
-
-type PostCategory = Exclude<AgentKey, "general">;
 
 export function PublishPostDialog({
   open,
@@ -21,26 +20,28 @@ export function PublishPostDialog({
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  defaultCategory?: PostCategory;
+  defaultCategory?: PostCategoryKey;
   defaultContent?: string;
   defaultContext?: "loisirs" | "professionnel";
 }) {
-  const [category, setCategory] = useState<PostCategory>(defaultCategory ?? "administratif");
+  const [category, setCategory] = useState<PostCategoryKey>(defaultCategory ?? "administratif");
   const [ctx, setCtx] = useState<"loisirs" | "professionnel">(defaultContext);
   const [content, setContent] = useState(defaultContent);
+  const [city, setCity] = useState("");
 
   useEffect(() => {
     if (open) {
       setCategory(defaultCategory ?? "administratif");
       setCtx(defaultContext);
       setContent(defaultContent);
+      setCity("");
     }
   }, [open, defaultCategory, defaultContent, defaultContext]);
 
   const qc = useQueryClient();
   const createFn = useServerFn(createPost);
   const m = useMutation({
-    mutationFn: () => createFn({ data: { category, context: ctx, content: content.trim() } }),
+    mutationFn: () => createFn({ data: { category, context: ctx, content: content.trim(), city: city.trim() || undefined } }),
     onSuccess: () => {
       toast.success("Publié !");
       qc.invalidateQueries({ queryKey: ["posts"] });
@@ -49,6 +50,8 @@ export function PublishPostDialog({
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erreur"),
   });
+
+  const showCity = category === "entraide";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -60,12 +63,12 @@ export function PublishPostDialog({
         >
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label>Univers</Label>
-              <Select value={category} onValueChange={(v) => setCategory(v as PostCategory)}>
+              <Label>Catégorie</Label>
+              <Select value={category} onValueChange={(v) => setCategory(v as PostCategoryKey)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {AGENT_ORDER.map((k) => (
-                    <SelectItem key={k} value={k}>{AGENT_META[k].label}</SelectItem>
+                  {POST_CATEGORY_ORDER.map((k) => (
+                    <SelectItem key={k} value={k}>{POST_CATEGORY_META[k].label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -81,6 +84,12 @@ export function PublishPostDialog({
               </Select>
             </div>
           </div>
+          {showCity && (
+            <div>
+              <Label>Ville (utile pour l'entraide locale)</Label>
+              <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="ex. Lyon" />
+            </div>
+          )}
           <div>
             <Label>Message</Label>
             <Textarea
@@ -90,7 +99,7 @@ export function PublishPostDialog({
               minLength={1}
               maxLength={2000}
               rows={6}
-              placeholder="Question, retour d'expérience, conseil..."
+              placeholder="Question, retour d'expérience, conseil…"
             />
             <p className="text-xs text-muted-foreground mt-1">{content.length}/2000</p>
           </div>

@@ -17,7 +17,9 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as CommunityIdRouteImport } from './routes/community.$id'
+import { Route as AuthenticatedRecipesRouteImport } from './routes/_authenticated/recipes'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
+import { Route as AuthenticatedGoalsRouteImport } from './routes/_authenticated/goals'
 
 const ListingsRoute = ListingsRouteImport.update({
   id: '/listings',
@@ -58,9 +60,19 @@ const CommunityIdRoute = CommunityIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => CommunityRoute,
 } as any)
+const AuthenticatedRecipesRoute = AuthenticatedRecipesRouteImport.update({
+  id: '/recipes',
+  path: '/recipes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
   id: '/history',
   path: '/history',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedGoalsRoute = AuthenticatedGoalsRouteImport.update({
+  id: '/goals',
+  path: '/goals',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
@@ -70,7 +82,9 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
+  '/goals': typeof AuthenticatedGoalsRoute
   '/history': typeof AuthenticatedHistoryRoute
+  '/recipes': typeof AuthenticatedRecipesRoute
   '/community/$id': typeof CommunityIdRoute
   '/listings/$id': typeof ListingsIdRoute
 }
@@ -80,7 +94,9 @@ export interface FileRoutesByTo {
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
+  '/goals': typeof AuthenticatedGoalsRoute
   '/history': typeof AuthenticatedHistoryRoute
+  '/recipes': typeof AuthenticatedRecipesRoute
   '/community/$id': typeof CommunityIdRoute
   '/listings/$id': typeof ListingsIdRoute
 }
@@ -92,7 +108,9 @@ export interface FileRoutesById {
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
+  '/_authenticated/goals': typeof AuthenticatedGoalsRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
+  '/_authenticated/recipes': typeof AuthenticatedRecipesRoute
   '/community/$id': typeof CommunityIdRoute
   '/listings/$id': typeof ListingsIdRoute
 }
@@ -104,7 +122,9 @@ export interface FileRouteTypes {
     | '/chat'
     | '/community'
     | '/listings'
+    | '/goals'
     | '/history'
+    | '/recipes'
     | '/community/$id'
     | '/listings/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -114,7 +134,9 @@ export interface FileRouteTypes {
     | '/chat'
     | '/community'
     | '/listings'
+    | '/goals'
     | '/history'
+    | '/recipes'
     | '/community/$id'
     | '/listings/$id'
   id:
@@ -125,7 +147,9 @@ export interface FileRouteTypes {
     | '/chat'
     | '/community'
     | '/listings'
+    | '/_authenticated/goals'
     | '/_authenticated/history'
+    | '/_authenticated/recipes'
     | '/community/$id'
     | '/listings/$id'
   fileRoutesById: FileRoutesById
@@ -197,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommunityIdRouteImport
       parentRoute: typeof CommunityRoute
     }
+    '/_authenticated/recipes': {
+      id: '/_authenticated/recipes'
+      path: '/recipes'
+      fullPath: '/recipes'
+      preLoaderRoute: typeof AuthenticatedRecipesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/history': {
       id: '/_authenticated/history'
       path: '/history'
@@ -204,15 +235,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHistoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/goals': {
+      id: '/_authenticated/goals'
+      path: '/goals'
+      fullPath: '/goals'
+      preLoaderRoute: typeof AuthenticatedGoalsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedGoalsRoute: typeof AuthenticatedGoalsRoute
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
+  AuthenticatedRecipesRoute: typeof AuthenticatedRecipesRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedGoalsRoute: AuthenticatedGoalsRoute,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
+  AuthenticatedRecipesRoute: AuthenticatedRecipesRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -253,13 +295,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

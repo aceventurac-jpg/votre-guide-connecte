@@ -10,8 +10,12 @@ export const CATEGORIES = [
   "Services Locaux",
   "Commerce International",
   "Apprentissage",
+  "Scolaire",
+  "Vêtements",
+  "Jouets",
+  "Animaux",
 ] as const;
-export const TYPES = ["Vente", "Location", "Covoiturage", "Service", "Tutorat"] as const;
+export const TYPES = ["Vente", "Location", "Covoiturage", "Service", "Tutorat", "Troc/Don"] as const;
 
 export const CONTEXTS = ["loisirs", "professionnel"] as const;
 
@@ -22,6 +26,7 @@ const ListingInput = z.object({
   title: z.string().trim().min(3).max(140),
   description: z.string().trim().min(10).max(2000),
   price: z.number().nonnegative().max(1_000_000).nullable().optional(),
+  is_free: z.boolean().optional(),
   subject: z.string().trim().max(80).optional().nullable(),
   level: z.string().trim().max(80).optional().nullable(),
   city: z.string().trim().max(80).optional().nullable(),
@@ -56,7 +61,7 @@ export const listListings = createServerFn({ method: "POST" })
     let q = sb
       .from("listings")
       .select(
-        "id, category, listing_type, context, title, description, price, subject, level, city, created_at, user_id",
+        "id, category, listing_type, context, title, description, price, is_free, subject, level, city, created_at, user_id",
       )
       .eq("active", true)
       .order("created_at", { ascending: false })

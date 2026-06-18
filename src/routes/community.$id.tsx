@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { listPosts, listComments, addComment, togglePostLike, deletePost, deleteComment } from "@/lib/community.functions";
-import { AGENT_META, type AgentKey } from "@/lib/agent-meta";
+import { POST_CATEGORY_META, type PostCategoryKey } from "@/lib/agent-meta";
+import { Sparkles } from "lucide-react";
 import { useIsAuthed } from "@/hooks/use-auth";
 import { Heart, MessageSquare, ArrowLeft, Trash2, LogIn } from "lucide-react";
 import { toast } from "sonner";
@@ -82,7 +83,7 @@ function PostDetail() {
     );
   }
 
-  const meta = AGENT_META[post.category as AgentKey] ?? AGENT_META.general;
+  const meta = POST_CATEGORY_META[post.category as PostCategoryKey] ?? { label: "Général", icon: Sparkles };
   const Icon = meta.icon;
   const comments = cmtData?.comments ?? [];
 
@@ -95,7 +96,7 @@ function PostDetail() {
 
         <Card className="p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: meta.color, color: meta.accent }}>
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-secondary">
               <Icon className="size-3" /> {meta.label}
             </span>
             <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">

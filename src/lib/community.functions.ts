@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getAnonClient, tryGetUser } from "@/lib/supabase-public.server";
 import { z } from "zod";
 
-const CATEGORIES = ["administratif","sante","voyage","services_locaux","commerce_international","apprentissage"] as const;
+const CATEGORIES = ["administratif","sante","voyage","services_locaux","commerce_international","apprentissage","entraide","animaux","cuisine"] as const;
 const CONTEXTS = ["loisirs","professionnel"] as const;
 
 // ---------- Messagerie interne ----------

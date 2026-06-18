@@ -71,6 +71,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <main className="flex-1 flex flex-col">{children}</main>
+      {location.pathname !== "/" && (
+        <Link
+          to="/"
+          aria-label="Retour à l'accueil"
+          className="fixed bottom-5 right-5 z-20 size-12 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 inline-flex items-center justify-center hover:scale-105 transition"
+        >
+          <Home className="size-5" />
+        </Link>
+      )}
     </div>
   );
 }

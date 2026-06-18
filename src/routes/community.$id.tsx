@@ -83,7 +83,7 @@ function PostDetail() {
     );
   }
 
-  const meta = AGENT_META[post.category as AgentKey] ?? AGENT_META.general;
+  const meta = POST_CATEGORY_META[post.category as PostCategoryKey] ?? { label: "Général", icon: Sparkles };
   const Icon = meta.icon;
   const comments = cmtData?.comments ?? [];
 

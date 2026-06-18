@@ -10,6 +10,8 @@ const NAV = [
   { to: "/chat", label: "Chat", icon: MessageCircle, authOnly: false },
   { to: "/community", label: "Communauté", icon: Users, authOnly: false },
   { to: "/listings", label: "Annonces", icon: Store, authOnly: false },
+  { to: "/recipes", label: "Recettes", icon: BookOpen, authOnly: true },
+  { to: "/goals", label: "Objectifs", icon: Target, authOnly: true },
   { to: "/history", label: "Historique", icon: History, authOnly: true },
 ] as const;
 

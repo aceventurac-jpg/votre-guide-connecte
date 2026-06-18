@@ -29,9 +29,11 @@ export const sendChatMessage = createServerFn({ method: "POST" })
     const sb = auth?.supabase ?? getAnonClient();
     const userId = auth?.userId ?? null;
 
-    const { generateText } = await import("ai");
+    const { generateText, tool, stepCountIs } = await import("ai");
+    const { z: zod } = await import("zod");
     const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
     const { AGENT_PROMPTS, ORCHESTRATOR_PROMPT } = await import("./agents.server");
+    const { webSearch, shouldUseWebSearch } = await import("./web-search.server");
 
     const gateway = createLovableAiGatewayProvider(apiKey);
     const model = gateway("google/gemini-3-flash-preview");

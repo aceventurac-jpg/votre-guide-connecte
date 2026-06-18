@@ -1,4 +1,4 @@
-import { FileText, Stethoscope, Plane, Wrench, Globe2, GraduationCap, Sparkles, type LucideIcon } from "lucide-react";
+import { FileText, Stethoscope, Plane, Wrench, Globe2, GraduationCap, Sparkles, HandHeart, PawPrint, ChefHat, type LucideIcon } from "lucide-react";
 
 export type AgentKey =
   | "administratif" | "sante" | "voyage"

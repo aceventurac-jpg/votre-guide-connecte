@@ -61,7 +61,7 @@ export const listListings = createServerFn({ method: "POST" })
     let q = sb
       .from("listings")
       .select(
-        "id, category, listing_type, context, title, description, price, subject, level, city, created_at, user_id",
+        "id, category, listing_type, context, title, description, price, is_free, subject, level, city, created_at, user_id",
       )
       .eq("active", true)
       .order("created_at", { ascending: false })

@@ -90,9 +90,38 @@ export const sendChatMessage = createServerFn({ method: "POST" })
       { role: "user" as const, content: data.message },
     ];
 
+    // Active la recherche web pour les agents qui cherchent des lieux/pros/établissements,
+    // et seulement si la demande utilisateur en a clairement besoin.
+    const webSearchAgents: AgentKey[] = ["sante", "voyage", "services_locaux", "commerce_international"];
+    const enableSearch = webSearchAgents.includes(agent) && shouldUseWebSearch(data.message);
+
+    const tools = enableSearch
+      ? {
+          web_search: tool({
+            description:
+              "Recherche sur le web public des établissements, professionnels, restaurants, commerces, lieux réels avec leur nom et leur URL. À utiliser dès que l'utilisateur demande une recommandation concrète (médecin, restaurant, artisan, commerce, etc.). Précise toujours la ville dans la requête si elle est connue.",
+            inputSchema: zod.object({
+              query: zod.string().min(2).describe("Requête de recherche, en français, incluant la ville si connue."),
+            }),
+            execute: async ({ query }) => {
+              const results = await webSearch(query, 5);
+              return { results };
+            },
+          }),
+        }
+      : undefined;
+
     let answer: string;
     try {
-      const result = await generateText({ model, system: systemPrompt, messages: conv });
+      const result = await generateText({
+        model,
+        system: tools
+          ? `${systemPrompt}\n\nIMPORTANT : pour toute demande de lieu, professionnel ou établissement, APPELLE D'ABORD l'outil web_search avec une requête précise (incluant la ville) avant de répondre. Cite ensuite les résultats par leur **nom réel** avec l'**URL cliquable** trouvée. N'invente jamais de nom ni d'adresse.`
+          : systemPrompt,
+        messages: conv,
+        tools,
+        stopWhen: tools ? stepCountIs(8) : undefined,
+      });
       answer = result.text.trim();
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);

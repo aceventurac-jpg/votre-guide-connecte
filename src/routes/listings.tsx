@@ -184,9 +184,11 @@ function NewListingDialog({ onSubmit, pending }: { onSubmit: (p: CreatePayload) 
         className="space-y-3"
         onSubmit={(e) => {
           e.preventDefault();
+          const effectiveFree = isFree || listing_type === "Troc/Don";
           onSubmit({
             category, listing_type, context: ctx, title, description,
-            price: price ? Number(price) : null,
+            price: effectiveFree ? null : (price ? Number(price) : null),
+            is_free: effectiveFree,
             subject: listing_type === "Tutorat" ? subject || null : null,
             level: listing_type === "Tutorat" ? level || null : null,
             city: city || null,
@@ -230,13 +232,22 @@ function NewListingDialog({ onSubmit, pending }: { onSubmit: (p: CreatePayload) 
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label>Prix (€)</Label>
-            <Input type="number" min={0} step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
+            <Input
+              type="number" min={0} step="0.01" value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              disabled={isFree || listing_type === "Troc/Don"}
+              placeholder={listing_type === "Troc/Don" ? "Gratuit" : ""}
+            />
           </div>
           <div>
             <Label>Ville</Label>
             <Input value={city} onChange={(e) => setCity(e.target.value)} />
           </div>
         </div>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={isFree || listing_type === "Troc/Don"} disabled={listing_type === "Troc/Don"} onChange={(e) => setIsFree(e.target.checked)} />
+          Gratuit (don)
+        </label>
         {listing_type === "Tutorat" && (
           <div className="grid grid-cols-2 gap-3">
             <div>

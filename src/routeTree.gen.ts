@@ -17,6 +17,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as CommunityIdRouteImport } from './routes/community.$id'
+import { Route as AuthenticatedRecipesRouteImport } from './routes/_authenticated/recipes'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
 
 const ListingsRoute = ListingsRouteImport.update({
@@ -58,6 +59,11 @@ const CommunityIdRoute = CommunityIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => CommunityRoute,
 } as any)
+const AuthenticatedRecipesRoute = AuthenticatedRecipesRouteImport.update({
+  id: '/recipes',
+  path: '/recipes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
   id: '/history',
   path: '/history',
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/community': typeof CommunityRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
   '/history': typeof AuthenticatedHistoryRoute
+  '/recipes': typeof AuthenticatedRecipesRoute
   '/community/$id': typeof CommunityIdRoute
   '/listings/$id': typeof ListingsIdRoute
 }
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/community': typeof CommunityRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
   '/history': typeof AuthenticatedHistoryRoute
+  '/recipes': typeof AuthenticatedRecipesRoute
   '/community/$id': typeof CommunityIdRoute
   '/listings/$id': typeof ListingsIdRoute
 }
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/community': typeof CommunityRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
+  '/_authenticated/recipes': typeof AuthenticatedRecipesRoute
   '/community/$id': typeof CommunityIdRoute
   '/listings/$id': typeof ListingsIdRoute
 }
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/listings'
     | '/history'
+    | '/recipes'
     | '/community/$id'
     | '/listings/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/listings'
     | '/history'
+    | '/recipes'
     | '/community/$id'
     | '/listings/$id'
   id:
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/listings'
     | '/_authenticated/history'
+    | '/_authenticated/recipes'
     | '/community/$id'
     | '/listings/$id'
   fileRoutesById: FileRoutesById
@@ -197,6 +209,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommunityIdRouteImport
       parentRoute: typeof CommunityRoute
     }
+    '/_authenticated/recipes': {
+      id: '/_authenticated/recipes'
+      path: '/recipes'
+      fullPath: '/recipes'
+      preLoaderRoute: typeof AuthenticatedRecipesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/history': {
       id: '/_authenticated/history'
       path: '/history'
@@ -209,10 +228,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
+  AuthenticatedRecipesRoute: typeof AuthenticatedRecipesRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
+  AuthenticatedRecipesRoute: AuthenticatedRecipesRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

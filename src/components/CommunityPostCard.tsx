@@ -1,13 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
-import { Heart, MessageSquare } from "lucide-react";
-import { AGENT_META, type AgentKey } from "@/lib/agent-meta";
+import { Heart, MessageSquare, MapPin } from "lucide-react";
+import { POST_CATEGORY_META, type PostCategoryKey } from "@/lib/agent-meta";
+import { Sparkles } from "lucide-react";
 
 export type CommunityPost = {
   id: string;
   user_id: string;
   category: string;
   context: string;
+  city?: string | null;
   content: string;
   created_at: string;
   author: { id: string; name: string | null; city: string | null } | null;
@@ -18,21 +20,25 @@ export type CommunityPost = {
 };
 
 export function CommunityPostCard({ post }: { post: CommunityPost }) {
-  const meta = AGENT_META[post.category as AgentKey] ?? AGENT_META.general;
+  const meta = POST_CATEGORY_META[post.category as PostCategoryKey] ?? { label: "Général", icon: Sparkles };
   const Icon = meta.icon;
   return (
     <Link to="/community/$id" params={{ id: post.id }} className="block">
       <Card className="p-4 space-y-2 hover:border-accent transition">
-        <div className="flex items-center justify-between gap-2">
-          <span
-            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium"
-            style={{ background: meta.color, color: meta.accent }}
-          >
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-secondary">
             <Icon className="size-3" /> {meta.label}
           </span>
-          <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
-            {post.context === "professionnel" ? "Pro" : "Loisirs"}
-          </span>
+          <div className="flex items-center gap-1.5">
+            {post.city && (
+              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-accent/10 text-accent">
+                <MapPin className="size-3" /> {post.city}
+              </span>
+            )}
+            <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
+              {post.context === "professionnel" ? "Pro" : "Loisirs"}
+            </span>
+          </div>
         </div>
         <p className="text-sm leading-relaxed line-clamp-3 whitespace-pre-wrap">{post.content}</p>
         <div className="flex items-center justify-between pt-2 border-t text-xs text-muted-foreground">

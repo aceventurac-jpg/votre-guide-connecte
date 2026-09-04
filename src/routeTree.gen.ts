@@ -17,6 +17,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
+import { Route as ForumIdRouteImport } from './routes/forum.$id'
 import { Route as CommunityIdRouteImport } from './routes/community.$id'
 import { Route as AuthenticatedRecipesRouteImport } from './routes/_authenticated/recipes'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
@@ -61,6 +62,11 @@ const ListingsIdRoute = ListingsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ListingsRoute,
 } as any)
+const ForumIdRoute = ForumIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ForumRoute,
+} as any)
 const CommunityIdRoute = CommunityIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -87,12 +93,13 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRouteWithChildren
-  '/forum': typeof ForumRoute
+  '/forum': typeof ForumRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
   '/goals': typeof AuthenticatedGoalsRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/recipes': typeof AuthenticatedRecipesRoute
   '/community/$id': typeof CommunityIdRoute
+  '/forum/$id': typeof ForumIdRoute
   '/listings/$id': typeof ListingsIdRoute
 }
 export interface FileRoutesByTo {
@@ -100,12 +107,13 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRouteWithChildren
-  '/forum': typeof ForumRoute
+  '/forum': typeof ForumRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
   '/goals': typeof AuthenticatedGoalsRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/recipes': typeof AuthenticatedRecipesRoute
   '/community/$id': typeof CommunityIdRoute
+  '/forum/$id': typeof ForumIdRoute
   '/listings/$id': typeof ListingsIdRoute
 }
 export interface FileRoutesById {
@@ -115,12 +123,13 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRouteWithChildren
-  '/forum': typeof ForumRoute
+  '/forum': typeof ForumRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
   '/_authenticated/goals': typeof AuthenticatedGoalsRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/recipes': typeof AuthenticatedRecipesRoute
   '/community/$id': typeof CommunityIdRoute
+  '/forum/$id': typeof ForumIdRoute
   '/listings/$id': typeof ListingsIdRoute
 }
 export interface FileRouteTypes {
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/recipes'
     | '/community/$id'
+    | '/forum/$id'
     | '/listings/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/recipes'
     | '/community/$id'
+    | '/forum/$id'
     | '/listings/$id'
   id:
     | '__root__'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/_authenticated/history'
     | '/_authenticated/recipes'
     | '/community/$id'
+    | '/forum/$id'
     | '/listings/$id'
   fileRoutesById: FileRoutesById
 }
@@ -172,7 +184,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ChatRoute: typeof ChatRoute
   CommunityRoute: typeof CommunityRouteWithChildren
-  ForumRoute: typeof ForumRoute
+  ForumRoute: typeof ForumRouteWithChildren
   ListingsRoute: typeof ListingsRouteWithChildren
 }
 
@@ -234,6 +246,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsIdRouteImport
       parentRoute: typeof ListingsRoute
     }
+    '/forum/$id': {
+      id: '/forum/$id'
+      path: '/$id'
+      fullPath: '/forum/$id'
+      preLoaderRoute: typeof ForumIdRouteImport
+      parentRoute: typeof ForumRoute
+    }
     '/community/$id': {
       id: '/community/$id'
       path: '/$id'
@@ -292,6 +311,16 @@ const CommunityRouteWithChildren = CommunityRoute._addFileChildren(
   CommunityRouteChildren,
 )
 
+interface ForumRouteChildren {
+  ForumIdRoute: typeof ForumIdRoute
+}
+
+const ForumRouteChildren: ForumRouteChildren = {
+  ForumIdRoute: ForumIdRoute,
+}
+
+const ForumRouteWithChildren = ForumRoute._addFileChildren(ForumRouteChildren)
+
 interface ListingsRouteChildren {
   ListingsIdRoute: typeof ListingsIdRoute
 }
@@ -310,7 +339,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ChatRoute: ChatRoute,
   CommunityRoute: CommunityRouteWithChildren,
-  ForumRoute: ForumRoute,
+  ForumRoute: ForumRouteWithChildren,
   ListingsRoute: ListingsRouteWithChildren,
 }
 export const routeTree = rootRouteImport

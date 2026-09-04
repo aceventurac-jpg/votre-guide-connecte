@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ListingsRouteImport } from './routes/listings'
+import { Route as ForumRouteImport } from './routes/forum'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -24,6 +25,11 @@ import { Route as AuthenticatedGoalsRouteImport } from './routes/_authenticated/
 const ListingsRoute = ListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForumRoute = ForumRouteImport.update({
+  id: '/forum',
+  path: '/forum',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityRoute = CommunityRouteImport.update({
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRouteWithChildren
+  '/forum': typeof ForumRoute
   '/listings': typeof ListingsRouteWithChildren
   '/goals': typeof AuthenticatedGoalsRoute
   '/history': typeof AuthenticatedHistoryRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRouteWithChildren
+  '/forum': typeof ForumRoute
   '/listings': typeof ListingsRouteWithChildren
   '/goals': typeof AuthenticatedGoalsRoute
   '/history': typeof AuthenticatedHistoryRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRouteWithChildren
+  '/forum': typeof ForumRoute
   '/listings': typeof ListingsRouteWithChildren
   '/_authenticated/goals': typeof AuthenticatedGoalsRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/chat'
     | '/community'
+    | '/forum'
     | '/listings'
     | '/goals'
     | '/history'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/chat'
     | '/community'
+    | '/forum'
     | '/listings'
     | '/goals'
     | '/history'
@@ -146,6 +157,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/chat'
     | '/community'
+    | '/forum'
     | '/listings'
     | '/_authenticated/goals'
     | '/_authenticated/history'
@@ -160,6 +172,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ChatRoute: typeof ChatRoute
   CommunityRoute: typeof CommunityRouteWithChildren
+  ForumRoute: typeof ForumRoute
   ListingsRoute: typeof ListingsRouteWithChildren
 }
 
@@ -170,6 +183,13 @@ declare module '@tanstack/react-router' {
       path: '/listings'
       fullPath: '/listings'
       preLoaderRoute: typeof ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forum': {
+      id: '/forum'
+      path: '/forum'
+      fullPath: '/forum'
+      preLoaderRoute: typeof ForumRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community': {
@@ -290,6 +310,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ChatRoute: ChatRoute,
   CommunityRoute: CommunityRouteWithChildren,
+  ForumRoute: ForumRoute,
   ListingsRoute: ListingsRouteWithChildren,
 }
 export const routeTree = rootRouteImport

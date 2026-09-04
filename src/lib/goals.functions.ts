@@ -7,6 +7,7 @@ const STATUSES = ["en_cours", "atteint", "abandonne"] as const;
 const GoalInput = z.object({
   title: z.string().trim().min(2).max(160),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
+  description: z.string().trim().max(1000).optional().nullable(),
 });
 
 export const createGoal = createServerFn({ method: "POST" })
@@ -15,7 +16,7 @@ export const createGoal = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { error, data: row } = await context.supabase
       .from("goals")
-      .insert({ title: data.title, deadline: data.deadline ?? null, user_id: context.userId })
+      .insert({ title: data.title, deadline: data.deadline ?? null, description: data.description || null, user_id: context.userId })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
@@ -27,7 +28,7 @@ export const listGoals = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("goals")
-      .select("id, title, deadline, status, created_at")
+      .select("id, title, deadline, status, progress, description, created_at")
       .eq("user_id", context.userId)
       .order("deadline", { ascending: true, nullsFirst: false });
     if (error) throw new Error(error.message);
@@ -54,6 +55,21 @@ export const deleteGoal = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("goals").delete().eq("id", data.id).eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const updateGoalProgress = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ id: z.string().uuid(), progress: z.number().int().min(0).max(100) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("goals")
+      .update({ progress: data.progress, status: data.progress >= 100 ? "atteint" : "en_cours" })
+      .eq("id", data.id)
+      .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

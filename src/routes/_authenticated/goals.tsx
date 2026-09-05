@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Target, CheckCircle2, XCircle, Trash2 } from "lucide-react";
-import { createGoal, listGoals, updateGoalStatus, deleteGoal } from "@/lib/goals.functions";
+import { createGoal, listGoals, updateGoalStatus, deleteGoal, updateGoalProgress } from "@/lib/goals.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/goals")({
@@ -31,6 +31,7 @@ function GoalsPage() {
   const createFn = useServerFn(createGoal);
   const updateFn = useServerFn(updateGoalStatus);
   const deleteFn = useServerFn(deleteGoal);
+  const progressFn = useServerFn(updateGoalProgress);
 
   const { data } = useQuery({ queryKey: ["goals"], queryFn: () => fetchFn() });
   const goals = data?.goals ?? [];
@@ -50,6 +51,10 @@ function GoalsPage() {
 
   const update = useMutation({
     mutationFn: (args: { id: string; status: "en_cours" | "atteint" | "abandonne" }) => updateFn({ data: args }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["goals"] }),
+  });
+  const progress = useMutation({
+    mutationFn: (a: { id: string; progress: number }) => progressFn({ data: a }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["goals"] }),
   });
   const del = useMutation({

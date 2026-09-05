@@ -8,7 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { BookOpen, Trash2, Share2 } from "lucide-react";
-import { createRecipe, listRecipes, deleteRecipe } from "@/lib/recipes.functions";
+import { createRecipe, listRecipes, deleteRecipe, setRecipeDay } from "@/lib/recipes.functions";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const DAYS = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"] as const;
 import { createPost } from "@/lib/community.functions";
 import { toast } from "sonner";
 
@@ -22,6 +25,7 @@ function RecipesPage() {
   const fetchFn = useServerFn(listRecipes);
   const createFn = useServerFn(createRecipe);
   const deleteFn = useServerFn(deleteRecipe);
+  const dayFn = useServerFn(setRecipeDay);
   const sharePost = useServerFn(createPost);
 
   const { data } = useQuery({ queryKey: ["recipes"], queryFn: () => fetchFn() });
@@ -30,21 +34,31 @@ function RecipesPage() {
   const [title, setTitle] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [steps, setSteps] = useState("");
+  const [photo, setPhoto] = useState("");
 
   const create = useMutation({
     mutationFn: async () => {
       const ing = ingredients.split("\n").map((s) => s.trim()).filter(Boolean);
       const st = steps.split("\n").map((s) => s.trim()).filter(Boolean);
       if (!title.trim() || ing.length === 0 || st.length === 0) throw new Error("Titre, ingrédients et étapes requis.");
-      return createFn({ data: { title: title.trim(), ingredients: ing, steps: st } });
+      return createFn({ data: { title: title.trim(), ingredients: ing, steps: st, photo_url: photo.trim() || null } });
     },
     onSuccess: () => {
-      setTitle(""); setIngredients(""); setSteps("");
+      setTitle(""); setIngredients(""); setSteps(""); setPhoto("");
       toast.success("Recette enregistrée.");
       qc.invalidateQueries({ queryKey: ["recipes"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const setDay = useMutation({
+    mutationFn: (a: { id: string; planned_day: string | null }) => dayFn({ data: a }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["recipes"] }),
+  });
+
+  const shopping = Array.from(
+    new Set(recipes.filter((r) => r.planned_day).flatMap((r) => r.ingredients.map((i) => i.trim()))),
+  ).sort((a, b) => a.localeCompare(b, "fr"));
 
   const del = useMutation({
     mutationFn: (id: string) => deleteFn({ data: { id } }),
@@ -87,10 +101,20 @@ function RecipesPage() {
             onChange={(e) => setSteps(e.target.value)}
             rows={6}
           />
+          <Input placeholder="Lien photo (optionnel, https://…)" value={photo} onChange={(e) => setPhoto(e.target.value)} />
           <Button onClick={() => create.mutate()} disabled={create.isPending}>
             {create.isPending ? "Enregistrement…" : "Enregistrer la recette"}
           </Button>
         </Card>
+
+        {shopping.length > 0 && (
+          <Card className="p-4 space-y-2">
+            <h2 className="font-semibold text-sm">Liste de courses de la semaine</h2>
+            <ul className="grid sm:grid-cols-2 gap-x-6 text-sm list-disc pl-5">
+              {shopping.map((i) => <li key={i}>{i}</li>)}
+            </ul>
+          </Card>
+        )}
 
         <div className="space-y-3">
           {recipes.length === 0 && (
@@ -109,6 +133,19 @@ function RecipesPage() {
                   </Button>
                 </div>
               </div>
+              {r.photo_url && (
+                <img src={r.photo_url} alt={`Photo de ${r.title}`} loading="lazy" className="w-full h-40 object-cover rounded-lg" />
+              )}
+              <Select
+                value={r.planned_day ?? "aucun"}
+                onValueChange={(v) => setDay.mutate({ id: r.id, planned_day: v === "aucun" ? null : v })}
+              >
+                <SelectTrigger className="w-48"><SelectValue placeholder="Jour du menu" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="aucun">Pas au menu</SelectItem>
+                  {DAYS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                </SelectContent>
+              </Select>
               <div className="grid sm:grid-cols-2 gap-3 text-sm">
                 <div>
                   <h3 className="text-xs font-semibold uppercase text-muted-foreground mb-1">Ingrédients</h3>

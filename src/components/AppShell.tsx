@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Sparkles, MessageCircle, Users, Store, History, LogOut, LogIn, Home, BookOpen, Target } from "lucide-react";
+import { Sparkles, MessageCircle, Users, Store, History, LogOut, LogIn, Home, BookOpen, Target, HandHeart, PawPrint, Gift } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,9 @@ const NAV = [
   { to: "/chat", label: "Chat", icon: MessageCircle, authOnly: false },
   { to: "/community", label: "Communauté", icon: Users, authOnly: false },
   { to: "/listings", label: "Annonces", icon: Store, authOnly: false },
+  { to: "/forum", label: "Entraide", icon: HandHeart, authOnly: false },
+  { to: "/pets", label: "Animaux", icon: PawPrint, authOnly: false },
+  { to: "/troc", label: "Troc", icon: Gift, authOnly: false },
   { to: "/recipes", label: "Recettes", icon: BookOpen, authOnly: true },
   { to: "/goals", label: "Objectifs", icon: Target, authOnly: true },
   { to: "/history", label: "Historique", icon: History, authOnly: true },
@@ -38,7 +41,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
             <span className="hidden sm:inline">Assistant Citoyen</span>
           </Link>
-          <nav className="flex items-center gap-1">
+          <nav className="flex items-center gap-1 overflow-x-auto">
             {NAV.filter((n) => !n.authOnly || authed).map((n) => {
               const active = location.pathname.startsWith(n.to);
               const Icon = n.icon;

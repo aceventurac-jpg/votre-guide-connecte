@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrocRouteImport } from './routes/troc'
+import { Route as PetsRouteImport } from './routes/pets'
 import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as ForumRouteImport } from './routes/forum'
 import { Route as CommunityRouteImport } from './routes/community'
@@ -23,6 +25,16 @@ import { Route as AuthenticatedRecipesRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
 import { Route as AuthenticatedGoalsRouteImport } from './routes/_authenticated/goals'
 
+const TrocRoute = TrocRouteImport.update({
+  id: '/troc',
+  path: '/troc',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PetsRoute = PetsRouteImport.update({
+  id: '/pets',
+  path: '/pets',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ListingsRoute = ListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
@@ -95,6 +107,8 @@ export interface FileRoutesByFullPath {
   '/community': typeof CommunityRouteWithChildren
   '/forum': typeof ForumRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
+  '/pets': typeof PetsRoute
+  '/troc': typeof TrocRoute
   '/goals': typeof AuthenticatedGoalsRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/recipes': typeof AuthenticatedRecipesRoute
@@ -109,6 +123,8 @@ export interface FileRoutesByTo {
   '/community': typeof CommunityRouteWithChildren
   '/forum': typeof ForumRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
+  '/pets': typeof PetsRoute
+  '/troc': typeof TrocRoute
   '/goals': typeof AuthenticatedGoalsRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/recipes': typeof AuthenticatedRecipesRoute
@@ -125,6 +141,8 @@ export interface FileRoutesById {
   '/community': typeof CommunityRouteWithChildren
   '/forum': typeof ForumRouteWithChildren
   '/listings': typeof ListingsRouteWithChildren
+  '/pets': typeof PetsRoute
+  '/troc': typeof TrocRoute
   '/_authenticated/goals': typeof AuthenticatedGoalsRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/recipes': typeof AuthenticatedRecipesRoute
@@ -141,6 +159,8 @@ export interface FileRouteTypes {
     | '/community'
     | '/forum'
     | '/listings'
+    | '/pets'
+    | '/troc'
     | '/goals'
     | '/history'
     | '/recipes'
@@ -155,6 +175,8 @@ export interface FileRouteTypes {
     | '/community'
     | '/forum'
     | '/listings'
+    | '/pets'
+    | '/troc'
     | '/goals'
     | '/history'
     | '/recipes'
@@ -170,6 +192,8 @@ export interface FileRouteTypes {
     | '/community'
     | '/forum'
     | '/listings'
+    | '/pets'
+    | '/troc'
     | '/_authenticated/goals'
     | '/_authenticated/history'
     | '/_authenticated/recipes'
@@ -186,10 +210,26 @@ export interface RootRouteChildren {
   CommunityRoute: typeof CommunityRouteWithChildren
   ForumRoute: typeof ForumRouteWithChildren
   ListingsRoute: typeof ListingsRouteWithChildren
+  PetsRoute: typeof PetsRoute
+  TrocRoute: typeof TrocRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/troc': {
+      id: '/troc'
+      path: '/troc'
+      fullPath: '/troc'
+      preLoaderRoute: typeof TrocRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pets': {
+      id: '/pets'
+      path: '/pets'
+      fullPath: '/pets'
+      preLoaderRoute: typeof PetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/listings': {
       id: '/listings'
       path: '/listings'
@@ -341,6 +381,8 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityRoute: CommunityRouteWithChildren,
   ForumRoute: ForumRouteWithChildren,
   ListingsRoute: ListingsRouteWithChildren,
+  PetsRoute: PetsRoute,
+  TrocRoute: TrocRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

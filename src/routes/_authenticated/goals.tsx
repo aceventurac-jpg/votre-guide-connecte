@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Target, CheckCircle2, XCircle, Trash2 } from "lucide-react";
-import { createGoal, listGoals, updateGoalStatus, deleteGoal } from "@/lib/goals.functions";
+import { createGoal, listGoals, updateGoalStatus, deleteGoal, updateGoalProgress } from "@/lib/goals.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/goals")({
@@ -31,6 +31,7 @@ function GoalsPage() {
   const createFn = useServerFn(createGoal);
   const updateFn = useServerFn(updateGoalStatus);
   const deleteFn = useServerFn(deleteGoal);
+  const progressFn = useServerFn(updateGoalProgress);
 
   const { data } = useQuery({ queryKey: ["goals"], queryFn: () => fetchFn() });
   const goals = data?.goals ?? [];
@@ -50,6 +51,10 @@ function GoalsPage() {
 
   const update = useMutation({
     mutationFn: (args: { id: string; status: "en_cours" | "atteint" | "abandonne" }) => updateFn({ data: args }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["goals"] }),
+  });
+  const progress = useMutation({
+    mutationFn: (a: { id: string; progress: number }) => progressFn({ data: a }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["goals"] }),
   });
   const del = useMutation({
@@ -85,10 +90,26 @@ function GoalsPage() {
           {goals.map((g) => {
             const b = deadlineBadge(g.deadline, g.status);
             return (
-              <Card key={g.id} className="p-4 flex items-center justify-between gap-3">
+              <Card key={g.id} className="p-4 flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <p className="font-medium truncate">{g.title}</p>
                   <span className={`inline-block text-xs px-2 py-0.5 rounded mt-1 ${b.cls}`}>{b.label}</span>
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="h-2 flex-1 rounded-full bg-secondary overflow-hidden">
+                      <div className="h-full bg-primary transition-all" style={{ width: `${g.progress ?? 0}%` }} />
+                    </div>
+                    <span className="text-xs text-muted-foreground w-10 text-right">{g.progress ?? 0}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={10}
+                    value={g.progress ?? 0}
+                    aria-label={`Progression de ${g.title}`}
+                    onChange={(e) => progress.mutate({ id: g.id, progress: Number(e.target.value) })}
+                    className="w-full mt-1 accent-primary"
+                  />
                 </div>
                 <div className="flex gap-1">
                   {g.status === "en_cours" && (

@@ -68,10 +68,14 @@ export const updateAvatarAndBio = createServerFn({ method: "POST" })
     z.object({ avatar_url: z.string().max(400).optional(), bio: z.string().max(500).optional() }).parse(i),
   )
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
-    if (data.avatar_url !== undefined) patch['avatar_url'] = data.avatar_url;
-    if (data.bio !== undefined) patch['bio'] = data.bio;
-    const { error } = await context.supabase.from("profiles").update(patch).eq("id", context.userId);
+    const { error } = await context.supabase
+      .from("profiles")
+      .update({
+        updated_at: new Date().toISOString(),
+        ...(data.avatar_url !== undefined ? { avatar_url: data.avatar_url } : {}),
+        ...(data.bio !== undefined ? { bio: data.bio } : {}),
+      })
+      .eq("id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

@@ -110,15 +110,34 @@ export const createPost = createServerFn({ method: "POST" })
       context: z.enum(CONTEXTS).default("loisirs"),
       content: z.string().trim().min(1).max(2000),
       city: z.string().trim().max(80).optional(),
+      media: z
+        .array(z.object({ type: z.enum(["image", "video"]), path: z.string().min(1).max(400) }))
+        .max(6)
+        .optional(),
     }).parse(input),
   )
   .handler(async ({ data, context }) => {
+    const { media, ...post } = data;
     const { error, data: row } = await context.supabase
       .from("posts")
-      .insert({ ...data, user_id: context.userId, city: data.city ?? null })
+      .insert({ ...post, user_id: context.userId, city: post.city ?? null })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
+    if (media?.length) {
+      const { error: mErr } = await context.supabase.from("media").insert(
+        media.map((m, i) => ({
+          owner_id: context.userId,
+          entity_type: "post",
+          entity_id: row.id,
+          post_id: row.id,
+          type: m.type,
+          url: m.path,
+          position: i,
+        })),
+      );
+      if (mErr) throw new Error(mErr.message);
+    }
     return { id: row.id };
   });
 
@@ -129,6 +148,8 @@ export const listPosts = createServerFn({ method: "POST" })
       context: z.enum(CONTEXTS).optional(),
       city: z.string().trim().max(80).optional(),
       limit: z.number().int().min(1).max(50).optional(),
+      only_media: z.boolean().optional(),
+      following: z.boolean().optional(),
     }).optional().parse(input),
   )
   .handler(async ({ data }) => {
@@ -143,6 +164,11 @@ export const listPosts = createServerFn({ method: "POST" })
     if (data?.category) q = q.eq("category", data.category);
     if (data?.context) q = q.eq("context", data.context);
     if (data?.city) q = q.ilike("city", `%${data.city}%`);
+    if (data?.following && meId) {
+      const { data: fol } = await sb.from("follows").select("followed_id").eq("follower_id", meId);
+      const ids = (fol ?? []).map((f) => f.followed_id);
+      q = q.in("user_id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"]);
+    }
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
 
@@ -151,13 +177,31 @@ export const listPosts = createServerFn({ method: "POST" })
     const safeUserIds = userIds.length ? userIds : ["00000000-0000-0000-0000-000000000000"];
     const safePostIds = ids.length ? ids : ["00000000-0000-0000-0000-000000000000"];
 
-    const [{ data: profs }, { data: likes }, { data: comments }] = await Promise.all([
-      sb.from("profiles").select("id, name, city").in("id", safeUserIds),
+    const [{ data: profs }, { data: likes }, { data: comments }, { data: mediaRows }] = await Promise.all([
+      sb.from("profiles").select("id, name, city, avatar_url, profile_type").in("id", safeUserIds),
       sb.from("post_likes").select("post_id, user_id").in("post_id", safePostIds),
       sb.from("post_comments").select("post_id").in("post_id", safePostIds),
+      sb.from("media").select("id, post_id, type, url, position").in("post_id", safePostIds).order("position"),
     ]);
 
-    const pmap = new Map((profs ?? []).map((p) => [p.id, p]));
+    const { signPaths, signOne } = await import("@/lib/media.server");
+    const urlMap = await signPaths([
+      ...(mediaRows ?? []).map((m) => m.url),
+      ...(profs ?? []).map((p) => p.avatar_url ?? ""),
+    ]);
+
+    const pmap = new Map(
+      (profs ?? []).map((p) => [p.id, { ...p, avatar_url: signOne(urlMap, p.avatar_url) }]),
+    );
+    const mmap = new Map<string, { id: string; type: string; url: string }[]>();
+    (mediaRows ?? []).forEach((m) => {
+      if (!m.post_id) return;
+      const url = signOne(urlMap, m.url);
+      if (!url) return;
+      const arr = mmap.get(m.post_id) ?? [];
+      arr.push({ id: m.id, type: m.type, url });
+      mmap.set(m.post_id, arr);
+    });
     const likeCount = new Map<string, number>();
     const likedByMe = new Set<string>();
     (likes ?? []).forEach((l) => {
@@ -167,17 +211,19 @@ export const listPosts = createServerFn({ method: "POST" })
     const commentCount = new Map<string, number>();
     (comments ?? []).forEach((c) => commentCount.set(c.post_id, (commentCount.get(c.post_id) ?? 0) + 1));
 
-    return {
-      posts: (rows ?? []).map((r) => ({
-        ...r,
-        author: pmap.get(r.user_id) ?? null,
-        likes: likeCount.get(r.id) ?? 0,
-        comments: commentCount.get(r.id) ?? 0,
-        liked_by_me: likedByMe.has(r.id),
-        mine: meId ? r.user_id === meId : false,
-      })),
-    };
+    const posts = (rows ?? []).map((r) => ({
+      ...r,
+      author: pmap.get(r.user_id) ?? null,
+      media: mmap.get(r.id) ?? [],
+      likes: likeCount.get(r.id) ?? 0,
+      comments: commentCount.get(r.id) ?? 0,
+      liked_by_me: likedByMe.has(r.id),
+      mine: meId ? r.user_id === meId : false,
+    }));
+
+    return { posts: data?.only_media ? posts.filter((p) => p.media.length > 0) : posts };
   });
+
 
 export const deletePost = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

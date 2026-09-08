@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Sparkles, MessageCircle, Users, Store, History, LogOut, LogIn, Home, BookOpen, Target, HandHeart, PawPrint, Gift } from "lucide-react";
+import { Sparkles, MessageCircle, Users, Store, History, LogOut, LogIn, Home, BookOpen, Target, HandHeart, PawPrint, Gift, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useIsAuthed } from "@/hooks/use-auth";
+import { NotificationsBell } from "@/components/NotificationsBell";
 import type { ReactNode } from "react";
 
 const NAV = [
@@ -13,6 +14,7 @@ const NAV = [
   { to: "/forum", label: "Entraide", icon: HandHeart, authOnly: false },
   { to: "/pets", label: "Animaux", icon: PawPrint, authOnly: false },
   { to: "/troc", label: "Troc", icon: Gift, authOnly: false },
+  { to: "/messages", label: "Messages", icon: Mail, authOnly: true },
   { to: "/recipes", label: "Recettes", icon: BookOpen, authOnly: true },
   { to: "/goals", label: "Objectifs", icon: Target, authOnly: true },
   { to: "/history", label: "Historique", icon: History, authOnly: true },
@@ -65,6 +67,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </Button>
               </Link>
             )}
+            {authed === true && <NotificationsBell />}
             {authed === true && (
               <Button variant="ghost" size="sm" onClick={signOut} className="ml-2" title="Se déconnecter">
                 <LogOut className="size-4" />

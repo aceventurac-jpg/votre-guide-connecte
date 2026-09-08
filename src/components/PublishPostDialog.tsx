@@ -9,6 +9,8 @@ import { POST_CATEGORY_META, POST_CATEGORY_ORDER, type PostCategoryKey } from "@
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPost } from "@/lib/community.functions";
+import { MediaPicker } from "@/components/MediaPicker";
+import type { UploadedMedia } from "@/lib/upload";
 import { toast } from "sonner";
 
 export function PublishPostDialog({
@@ -28,6 +30,7 @@ export function PublishPostDialog({
   const [ctx, setCtx] = useState<"loisirs" | "professionnel">(defaultContext);
   const [content, setContent] = useState(defaultContent);
   const [city, setCity] = useState("");
+  const [media, setMedia] = useState<UploadedMedia[]>([]);
 
   useEffect(() => {
     if (open) {
@@ -35,13 +38,23 @@ export function PublishPostDialog({
       setCtx(defaultContext);
       setContent(defaultContent);
       setCity("");
+      setMedia([]);
     }
   }, [open, defaultCategory, defaultContent, defaultContext]);
 
   const qc = useQueryClient();
   const createFn = useServerFn(createPost);
   const m = useMutation({
-    mutationFn: () => createFn({ data: { category, context: ctx, content: content.trim(), city: city.trim() || undefined } }),
+    mutationFn: () =>
+      createFn({
+        data: {
+          category,
+          context: ctx,
+          content: content.trim(),
+          city: city.trim() || undefined,
+          media: media.length ? media : undefined,
+        },
+      }),
     onSuccess: () => {
       toast.success("Publié !");
       qc.invalidateQueries({ queryKey: ["posts"] });
@@ -103,6 +116,7 @@ export function PublishPostDialog({
             />
             <p className="text-xs text-muted-foreground mt-1">{content.length}/2000</p>
           </div>
+          <MediaPicker value={media} onChange={setMedia} max={4} maxVideoSeconds={60} />
           <Button type="submit" disabled={m.isPending || !content.trim()} className="w-full">
             {m.isPending ? "..." : "Publier"}
           </Button>

@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Heart, MessageSquare, MapPin } from "lucide-react";
 import { POST_CATEGORY_META, type PostCategoryKey } from "@/lib/agent-meta";
 import { Sparkles } from "lucide-react";
+import { MediaStrip, type PostMediaItem } from "@/components/PostMedia";
 
 export type CommunityPost = {
   id: string;
@@ -12,7 +13,8 @@ export type CommunityPost = {
   city?: string | null;
   content: string;
   created_at: string;
-  author: { id: string; name: string | null; city: string | null } | null;
+  author: { id: string; name: string | null; city: string | null; avatar_url?: string | null } | null;
+  media?: PostMediaItem[];
   likes: number;
   comments: number;
   liked_by_me: boolean;
@@ -41,6 +43,7 @@ export function CommunityPostCard({ post }: { post: CommunityPost }) {
           </div>
         </div>
         <p className="text-sm leading-relaxed line-clamp-3 whitespace-pre-wrap">{post.content}</p>
+        {post.media && post.media.length > 0 && <MediaStrip media={post.media} />}
         <div className="flex items-center justify-between pt-2 border-t text-xs text-muted-foreground">
           <span>{post.author?.name || "Membre"}{post.author?.city ? ` · ${post.author.city}` : ""}</span>
           <span className="flex items-center gap-3">

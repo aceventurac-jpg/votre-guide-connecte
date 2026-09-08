@@ -116,6 +116,7 @@ export function PublishPostDialog({
             />
             <p className="text-xs text-muted-foreground mt-1">{content.length}/2000</p>
           </div>
+          <MediaPicker value={media} onChange={setMedia} max={4} maxVideoSeconds={60} />
           <Button type="submit" disabled={m.isPending || !content.trim()} className="w-full">
             {m.isPending ? "..." : "Publier"}
           </Button>

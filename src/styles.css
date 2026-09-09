@@ -137,3 +137,23 @@
     border-radius: 1rem 1rem 1rem 0.25rem;
   }
 }
+
+@theme {
+  --color-troc: #7c3aed;
+  --color-recette: #ff6b35;
+  --color-domicile: #00d4a8;
+  --color-eco: #22c55e;
+  --color-heart: #ff6b6b;
+}
+
+@keyframes heart-pop {
+  0% { transform: scale(0.2) rotate(-12deg); opacity: 0; }
+  35% { transform: scale(1.25) rotate(6deg); opacity: 1; }
+  70% { transform: scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1.6) rotate(0deg); opacity: 0; }
+}
+
+@utility heart-pop {
+  animation: heart-pop 750ms ease-out forwards;
+  color: var(--color-heart);
+}

@@ -19,6 +19,15 @@ export const TYPES = ["Vente", "Location", "Covoiturage", "Service", "Tutorat", 
 
 export const CONTEXTS = ["loisirs", "professionnel"] as const;
 
+export const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "Enfant"] as const;
+export const STYLES = ["Casual", "Chic", "Sport", "Vintage", "Streetwear", "Professionnel"] as const;
+export const CONDITIONS = ["Neuf", "Très bon état", "Bon état", "À retoucher"] as const;
+
+const MediaInput = z
+  .array(z.object({ type: z.enum(["image", "video"]), path: z.string().min(1).max(400) }))
+  .max(6)
+  .optional();
+
 const ListingInput = z.object({
   category: z.enum(CATEGORIES),
   listing_type: z.enum(TYPES),
@@ -30,18 +39,36 @@ const ListingInput = z.object({
   subject: z.string().trim().max(80).optional().nullable(),
   level: z.string().trim().max(80).optional().nullable(),
   city: z.string().trim().max(80).optional().nullable(),
+  size: z.string().trim().max(20).optional().nullable(),
+  style: z.string().trim().max(40).optional().nullable(),
+  item_condition: z.string().trim().max(40).optional().nullable(),
+  media: MediaInput,
 });
 
 export const createListing = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => ListingInput.parse(input))
   .handler(async ({ data, context }) => {
+    const { media, ...listing } = data;
     const { error, data: row } = await context.supabase
       .from("listings")
-      .insert({ ...data, user_id: context.userId })
+      .insert({ ...listing, user_id: context.userId })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
+    if (media?.length) {
+      const { error: mErr } = await context.supabase.from("media").insert(
+        media.map((m, i) => ({
+          owner_id: context.userId,
+          entity_type: "listing",
+          entity_id: row.id,
+          type: m.type,
+          url: m.path,
+          position: i,
+        })),
+      );
+      if (mErr) throw new Error(mErr.message);
+    }
     return { id: row.id };
   });
 
@@ -50,6 +77,10 @@ const ListInput = z
     category: z.enum(CATEGORIES).optional(),
     listing_type: z.enum(TYPES).optional(),
     context: z.enum(CONTEXTS).optional(),
+    city: z.string().trim().max(80).optional(),
+    size: z.string().trim().max(20).optional(),
+    style: z.string().trim().max(40).optional(),
+    item_condition: z.string().trim().max(40).optional(),
   })
   .optional();
 
@@ -61,7 +92,7 @@ export const listListings = createServerFn({ method: "POST" })
     let q = sb
       .from("listings")
       .select(
-        "id, category, listing_type, context, title, description, price, is_free, subject, level, city, created_at, user_id",
+        "id, category, listing_type, context, title, description, price, is_free, subject, level, city, size, style, item_condition, created_at, user_id",
       )
       .eq("active", true)
       .order("created_at", { ascending: false })
@@ -69,15 +100,39 @@ export const listListings = createServerFn({ method: "POST" })
     if (data?.category) q = q.eq("category", data.category);
     if (data?.listing_type) q = q.eq("listing_type", data.listing_type);
     if (data?.context) q = q.eq("context", data.context);
+    if (data?.city) q = q.ilike("city", `%${data.city}%`);
+    if (data?.size) q = q.eq("size", data.size);
+    if (data?.style) q = q.eq("style", data.style);
+    if (data?.item_condition) q = q.eq("item_condition", data.item_condition);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
 
     const userIds = Array.from(new Set((rows ?? []).map((r) => r.user_id)));
     const safeIds = userIds.length ? userIds : ["00000000-0000-0000-0000-000000000000"];
-    const [{ data: profs }, { data: ratings }] = await Promise.all([
+    const listingIds = (rows ?? []).map((r) => r.id);
+    const safeListingIds = listingIds.length ? listingIds : ["00000000-0000-0000-0000-000000000000"];
+    const [{ data: profs }, { data: ratings }, { data: mediaRows }] = await Promise.all([
       sb.from("profiles").select("id, name, city, verified, profile_type").in("id", safeIds),
       sb.from("user_ratings").select("user_id, avg_rating, review_count").in("user_id", safeIds),
+      sb
+        .from("media")
+        .select("id, entity_id, type, url, position")
+        .eq("entity_type", "listing")
+        .in("entity_id", safeListingIds)
+        .order("position"),
     ]);
+
+    const { signPaths, signOne } = await import("@/lib/media.server");
+    const urlMap = await signPaths((mediaRows ?? []).map((m) => m.url));
+    const mmap = new Map<string, { id: string; type: string; url: string }[]>();
+    (mediaRows ?? []).forEach((m) => {
+      const url = signOne(urlMap, m.url);
+      if (!url) return;
+      const arr = mmap.get(m.entity_id) ?? [];
+      arr.push({ id: m.id, type: m.type, url });
+      mmap.set(m.entity_id, arr);
+    });
+
     const pmap = new Map((profs ?? []).map((p) => [p.id, p]));
     const rmap = new Map((ratings ?? []).map((r) => [r.user_id, r]));
     return {
@@ -85,6 +140,7 @@ export const listListings = createServerFn({ method: "POST" })
         ...r,
         seller: pmap.get(r.user_id) ?? null,
         rating: rmap.get(r.user_id) ?? null,
+        media: mmap.get(r.id) ?? [],
       })),
     };
   });
@@ -101,7 +157,7 @@ export const getListing = createServerFn({ method: "POST" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!listing) throw new Error("Annonce introuvable");
-    const [{ data: seller }, { data: rating }, { data: reviews }] = await Promise.all([
+    const [{ data: seller }, { data: rating }, { data: reviews }, { data: mediaRows }] = await Promise.all([
       sb.from("profiles").select("id, name, city, verified, profile_type").eq("id", listing.user_id).maybeSingle(),
       sb.from("user_ratings").select("avg_rating, review_count").eq("user_id", listing.user_id).maybeSingle(),
       sb
@@ -109,8 +165,14 @@ export const getListing = createServerFn({ method: "POST" })
         .select("id, rating, comment, created_at, reviewer_id")
         .eq("listing_id", data.id)
         .order("created_at", { ascending: false }),
+      sb.from("media").select("id, type, url, position").eq("entity_type", "listing").eq("entity_id", data.id).order("position"),
     ]);
-    return { listing, seller, rating, reviews: reviews ?? [] };
+    const { signPaths, signOne } = await import("@/lib/media.server");
+    const urlMap = await signPaths((mediaRows ?? []).map((m) => m.url));
+    const media = (mediaRows ?? [])
+      .map((m) => ({ id: m.id, type: m.type, url: signOne(urlMap, m.url) }))
+      .filter((m): m is { id: string; type: string; url: string } => Boolean(m.url));
+    return { listing, seller, rating, reviews: reviews ?? [], media };
   });
 
 export const deleteListing = createServerFn({ method: "POST" })

@@ -1,0 +1,50 @@
+{
+  "name": "Votre Guide Connecté",
+  "short_name": "Votre Guide",
+  "description": "Un assistant IA et une communauté pour simplifier votre quotidien",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#38BDF8",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%2338BDF8' width='192' height='192'/><text x='96' y='120' font-size='100' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>V</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%2338BDF8' width='512' height='512'/><text x='256' y='350' font-size='280' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>V</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%23f8fafc' width='540' height='720'/><text x='270' y='360' font-size='80' fill='%2338BDF8' text-anchor='middle' font-family='Arial'>Votre Guide</text></svg>",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Chat IA",
+      "short_name": "Chat",
+      "description": "Ouvre le chat avec l'assistant IA",
+      "url": "/chat",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%2338BDF8' width='192' height='192'/><circle cx='96' cy='96' r='60' fill='white' opacity='0.2'/></svg>", "sizes": "192x192" }]
+    },
+    {
+      "name": "Fil social",
+      "short_name": "Social",
+      "description": "Découvre le fil social local",
+      "url": "/social",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23ef4444' width='192' height='192'/></svg>", "sizes": "192x192" }]
+    }
+  ]
+}

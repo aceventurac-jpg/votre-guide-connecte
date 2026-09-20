@@ -70,19 +70,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "Votre Guide" },
+      { name: "theme-color", content: "#38BDF8" },
       { title: "Assistant Citoyen" },
       { name: "description", content: "Pose ta question, on s'occupe du reste." },
       { property: "og:title", content: "Assistant Citoyen" },
       { name: "twitter:title", content: "Assistant Citoyen" },
       { property: "og:description", content: "Pose ta question, on s'occupe du reste." },
       { name: "twitter:description", content: "Pose ta question, on s'occupe du reste." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/89ed5b55-b29d-441b-97f4-8b50ca3a73ca/id-preview-6cbc9669--d94735ed-0a00-4945-a079-875a9603a447.lovable.app-1781448542045.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/89ed5b55-b29d-441b-97f4-8b50ca3a73ca/id-preview-6cbc9669--d94735ed-0a00-4945-a079-875a9603a447.lovable.app-1781448542045.png" },
+      { property: "og:image", content: "https://r2.dev" },
+      { name: "twitter:image", content: "https://r2.dev" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.json" },
+      { rel: "icon", href: "data:image/svg+xml,<svg xmlns='http://w3.org' viewBox='0 0 192 192'><rect fill='%2338BDF8' width='192' height='192'/><text x='96' y='120' font-size='100' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>V</text></svg>" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -114,6 +122,17 @@ function RootComponent() {
     });
     return () => subscription.unsubscribe();
   }, [router, queryClient]);
+
+  // Register service worker
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/service-worker.ts")
+        .catch(() => {
+          // Silently fail if SW registration fails
+        });
+    }
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

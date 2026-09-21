@@ -36,7 +36,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: { error: any; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -75,10 +75,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "Votre Guide" },
       { name: "theme-color", content: "#38BDF8" },
-      { title: "Assistant Citoyen" },
+      { title: "SocialTown" },
       { name: "description", content: "Pose ta question, on s'occupe du reste." },
-      { property: "og:title", content: "Assistant Citoyen" },
-      { name: "twitter:title", content: "Assistant Citoyen" },
+      { property: "og:title", content: "SocialTown" },
+      { name: "twitter:title", content: "SocialTown" },
       { property: "og:description", content: "Pose ta question, on s'occupe du reste." },
       { name: "twitter:description", content: "Pose ta question, on s'occupe du reste." },
       { property: "og:image", content: "https://r2.dev" },
@@ -89,7 +89,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "manifest", href: "/manifest.json" },
-      { rel: "icon", href: "data:image/svg+xml,<svg xmlns='http://w3.org' viewBox='0 0 192 192'><rect fill='%2338BDF8' width='192' height='192'/><text x='96' y='120' font-size='100' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>V</text></svg>" },
+      { rel: "icon", href: "data:image/svg+xml,<svg xmlns='http://www.w3.org' viewBox='0 0 192 192'><rect fill='%2338BDF8' width='192' height='192'/><text x='96' y='120' font-size='100' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>S</text></svg>" },
     ],
   }),
   shellComponent: RootShell,

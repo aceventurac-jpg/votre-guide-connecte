@@ -1,0 +1,2 @@
+import { Sparkles, Shield, CloudRain, Home, Hammer, Briefcase, Heart } from 'lucide-react';
+export const filters = [{ id: 'all', name: 'Tout', icon: Sparkles }, { id: 'sante', name: 'Santé', icon: Shield }, { id: 'meteo', name: 'Météo', icon: CloudRain }, { id: 'covoiturage', name: 'Covoiturage', icon: Home }, { id: 'btp', name: 'BTP', icon: Hammer }, { id: 'commerce', name: 'Pro', icon: Briefcase }, { id: 'solidarite', name: 'Solidarité', icon: Heart }];

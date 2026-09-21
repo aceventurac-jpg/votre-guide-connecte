@@ -25,6 +25,7 @@ import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as NewsPreferencesRouteImport } from './routes/news-preferences'
 import { Route as PetsRouteImport } from './routes/pets'
+import { Route as RecipesRouteImport } from './routes/recipes'
 import { Route as SocialRouteImport } from './routes/social'
 import { Route as SolidarityRouteImport } from './routes/solidarity'
 import { Route as SolutionsRouteImport } from './routes/solutions'
@@ -118,6 +119,11 @@ const PetsRoute = PetsRouteImport.update({
   path: '/pets',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecipesRoute = RecipesRouteImport.update({
+  id: '/recipes',
+  path: '/recipes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SocialRoute = SocialRouteImport.update({
   id: '/social',
   path: '/social',
@@ -196,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/news': typeof NewsRoute
   '/news-preferences': typeof NewsPreferencesRoute
   '/pets': typeof PetsRoute
+  '/recipes': typeof RecipesRoute
   '/social': typeof SocialRoute
   '/solidarity': typeof SolidarityRoute
   '/solutions': typeof SolutionsRoute
@@ -226,6 +233,7 @@ export interface FileRoutesByTo {
   '/news': typeof NewsRoute
   '/news-preferences': typeof NewsPreferencesRoute
   '/pets': typeof PetsRoute
+  '/recipes': typeof RecipesRoute
   '/social': typeof SocialRoute
   '/solidarity': typeof SolidarityRoute
   '/solutions': typeof SolutionsRoute
@@ -257,6 +265,7 @@ export interface FileRoutesById {
   '/news': typeof NewsRoute
   '/news-preferences': typeof NewsPreferencesRoute
   '/pets': typeof PetsRoute
+  '/recipes': typeof RecipesRoute
   '/social': typeof SocialRoute
   '/solidarity': typeof SolidarityRoute
   '/solutions': typeof SolutionsRoute
@@ -289,6 +298,7 @@ export interface FileRouteTypes {
     | '/news'
     | '/news-preferences'
     | '/pets'
+    | '/recipes'
     | '/social'
     | '/solidarity'
     | '/solutions'
@@ -319,6 +329,7 @@ export interface FileRouteTypes {
     | '/news'
     | '/news-preferences'
     | '/pets'
+    | '/recipes'
     | '/social'
     | '/solidarity'
     | '/solutions'
@@ -349,6 +360,7 @@ export interface FileRouteTypes {
     | '/news'
     | '/news-preferences'
     | '/pets'
+    | '/recipes'
     | '/social'
     | '/solidarity'
     | '/solutions'
@@ -380,6 +392,7 @@ export interface RootRouteChildren {
   NewsRoute: typeof NewsRoute
   NewsPreferencesRoute: typeof NewsPreferencesRoute
   PetsRoute: typeof PetsRoute
+  RecipesRoute: typeof RecipesRoute
   SocialRoute: typeof SocialRoute
   SolidarityRoute: typeof SolidarityRoute
   SolutionsRoute: typeof SolutionsRoute
@@ -503,6 +516,13 @@ declare module '@tanstack/react-router' {
       path: '/pets'
       fullPath: '/pets'
       preLoaderRoute: typeof PetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recipes': {
+      id: '/recipes'
+      path: '/recipes'
+      fullPath: '/recipes'
+      preLoaderRoute: typeof RecipesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/social': {
@@ -643,6 +663,7 @@ const rootRouteChildren: RootRouteChildren = {
   NewsRoute: NewsRoute,
   NewsPreferencesRoute: NewsPreferencesRoute,
   PetsRoute: PetsRoute,
+  RecipesRoute: RecipesRoute,
   SocialRoute: SocialRoute,
   SolidarityRoute: SolidarityRoute,
   SolutionsRoute: SolutionsRoute,

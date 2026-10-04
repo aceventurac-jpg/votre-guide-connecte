@@ -151,10 +151,10 @@ function WhatsImportantPage() {
 
   const handleAction = async (article: RSSItem, action: string) => {
     try {
-      await trackFn({
+      await trackFn({ data: {
         articleUrl: article.link,
         action: action as "view" | "like" | "share" | "save",
-      });
+      } });
     } catch (error) {
       console.error("Erreur tracking:", error);
     }

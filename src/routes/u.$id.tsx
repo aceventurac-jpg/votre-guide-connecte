@@ -92,7 +92,7 @@ function PublicProfilePage() {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => (authed ? navigate({ to: "/messages/$id", params: { id } }) : navigate({ to: "/auth" }))}
+                    onClick={() => (authed ? navigate({ to: "/messages" as any }) : navigate({ to: "/auth" }))}
                   >
                     <MessageCircle className="size-4 mr-1" /> Message
                   </Button>

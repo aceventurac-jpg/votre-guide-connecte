@@ -139,6 +139,13 @@
 }
 
 @theme {
+  --color-arcade: #070712;
+  --color-arcade-panel: #11112a;
+  --color-neon-cyan: #22e3ff;
+  --color-neon-pink: #ff2bd6;
+  --color-neon-yellow: #ffd23f;
+  --color-neon-green: #39ff88;
+  --color-neon-red: #ff4d5e;
   --color-troc: #7c3aed;
   --color-recette: #ff6b35;
   --color-domicile: #00d4a8;

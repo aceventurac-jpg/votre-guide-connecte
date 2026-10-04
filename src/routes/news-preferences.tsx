@@ -87,10 +87,10 @@ function NewsPreferencesPage() {
 
   useEffect(() => {
     async function loadPreferences() {
-      const { data: user } = await supabase.auth.getUser();
+      const { data: user } = await (supabase as any).auth.getUser();
       if (!user?.user?.id) return;
 
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("news_preferences")
         .select("*")
         .eq("user_id", user.user.id)
@@ -113,17 +113,17 @@ function NewsPreferencesPage() {
   }, []);
 
   async function savePreferences() {
-    const { data: user } = await supabase.auth.getUser();
+    const { data: user } = await (supabase as any).auth.getUser();
     if (!user?.user?.id) return;
 
-    const { data: existing } = await supabase
+    const { data: existing } = await (supabase as any)
       .from("news_preferences")
       .select("*")
       .eq("user_id", user.user.id)
       .single();
 
     if (existing) {
-      await supabase
+      await (supabase as any)
         .from("news_preferences")
         .update({
           categories: selectedCategories,
@@ -131,7 +131,7 @@ function NewsPreferencesPage() {
         })
         .eq("user_id", user.user.id);
     } else {
-      await supabase.from("news_preferences").insert({
+      await (supabase as any).from("news_preferences").insert({
         user_id: user.user.id,
         categories: selectedCategories,
         sources: selectedSources,

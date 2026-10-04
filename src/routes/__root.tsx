@@ -81,8 +81,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "SocialTown" },
       { property: "og:description", content: "Pose ta question, on s'occupe du reste." },
       { name: "twitter:description", content: "Pose ta question, on s'occupe du reste." },
-      { property: "og:image", content: "https://r2.dev" },
-      { name: "twitter:image", content: "https://r2.dev" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
     ],

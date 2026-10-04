@@ -9,149 +9,40 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WhatsImportantRouteImport } from './routes/whats-important'
-import { Route as WeatherSmartRouteImport } from './routes/weather-smart'
-import { Route as WeatherRouteImport } from './routes/weather'
-import { Route as TvFeedRouteImport } from './routes/tv-feed'
-import { Route as TrocRouteImport } from './routes/troc'
-import { Route as SolutionsRouteImport } from './routes/solutions'
-import { Route as SolidarityRouteImport } from './routes/solidarity'
-import { Route as SocialRouteImport } from './routes/social'
-import { Route as RecipesRouteImport } from './routes/recipes'
-import { Route as PetsRouteImport } from './routes/pets'
-import { Route as NewsPreferencesRouteImport } from './routes/news-preferences'
-import { Route as NewsRouteImport } from './routes/news'
-import { Route as ListingsRouteImport } from './routes/listings'
-import { Route as HealthCoachRouteImport } from './routes/health-coach'
-import { Route as ForumRouteImport } from './routes/forum'
-import { Route as EcoRouteImport } from './routes/eco'
-import { Route as CovoiturageRouteImport } from './routes/covoiturage'
-import { Route as CommunityRouteImport } from './routes/community'
-import { Route as CoachSanteRouteImport } from './routes/coach-sante'
-import { Route as ChatRouteImport } from './routes/chat'
-import { Route as CarpoolRouteImport } from './routes/carpool'
-import { Route as BusinessRouteImport } from './routes/business'
-import { Route as BtpRouteImport } from './routes/btp'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UIdRouteImport } from './routes/u.$id'
-import { Route as ListingsIdRouteImport } from './routes/listings.$id'
-import { Route as ForumIdRouteImport } from './routes/forum.$id'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BtpRouteImport } from './routes/btp'
+import { Route as BusinessRouteImport } from './routes/business'
+import { Route as CarpoolRouteImport } from './routes/carpool'
+import { Route as ChatRouteImport } from './routes/chat'
+import { Route as CoachSanteRouteImport } from './routes/coach-sante'
+import { Route as CommunityRouteImport } from './routes/community'
+import { Route as CovoiturageRouteImport } from './routes/covoiturage'
+import { Route as EcoRouteImport } from './routes/eco'
+import { Route as ForumRouteImport } from './routes/forum'
+import { Route as HealthCoachRouteImport } from './routes/health-coach'
+import { Route as ListingsRouteImport } from './routes/listings'
+import { Route as NewsRouteImport } from './routes/news'
+import { Route as NewsPreferencesRouteImport } from './routes/news-preferences'
+import { Route as PetsRouteImport } from './routes/pets'
+import { Route as RecipesRouteImport } from './routes/recipes'
+import { Route as SocialRouteImport } from './routes/social'
+import { Route as SolidarityRouteImport } from './routes/solidarity'
+import { Route as SolutionsRouteImport } from './routes/solutions'
+import { Route as TrocRouteImport } from './routes/troc'
+import { Route as TvFeedRouteImport } from './routes/tv-feed'
+import { Route as WeatherRouteImport } from './routes/weather'
+import { Route as WeatherSmartRouteImport } from './routes/weather-smart'
+import { Route as WhatsImportantRouteImport } from './routes/whats-important'
 import { Route as CommunityIdRouteImport } from './routes/community.$id'
+import { Route as ForumIdRouteImport } from './routes/forum.$id'
+import { Route as ListingsIdRouteImport } from './routes/listings.$id'
+import { Route as UIdRouteImport } from './routes/u.$id'
+import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 
-const WhatsImportantRoute = WhatsImportantRouteImport.update({
-  id: '/whats-important',
-  path: '/whats-important',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const WeatherSmartRoute = WeatherSmartRouteImport.update({
-  id: '/weather-smart',
-  path: '/weather-smart',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const WeatherRoute = WeatherRouteImport.update({
-  id: '/weather',
-  path: '/weather',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TvFeedRoute = TvFeedRouteImport.update({
-  id: '/tv-feed',
-  path: '/tv-feed',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TrocRoute = TrocRouteImport.update({
-  id: '/troc',
-  path: '/troc',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SolutionsRoute = SolutionsRouteImport.update({
-  id: '/solutions',
-  path: '/solutions',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SolidarityRoute = SolidarityRouteImport.update({
-  id: '/solidarity',
-  path: '/solidarity',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SocialRoute = SocialRouteImport.update({
-  id: '/social',
-  path: '/social',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecipesRoute = RecipesRouteImport.update({
-  id: '/recipes',
-  path: '/recipes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PetsRoute = PetsRouteImport.update({
-  id: '/pets',
-  path: '/pets',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewsPreferencesRoute = NewsPreferencesRouteImport.update({
-  id: '/news-preferences',
-  path: '/news-preferences',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewsRoute = NewsRouteImport.update({
-  id: '/news',
-  path: '/news',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ListingsRoute = ListingsRouteImport.update({
-  id: '/listings',
-  path: '/listings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HealthCoachRoute = HealthCoachRouteImport.update({
-  id: '/health-coach',
-  path: '/health-coach',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForumRoute = ForumRouteImport.update({
-  id: '/forum',
-  path: '/forum',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EcoRoute = EcoRouteImport.update({
-  id: '/eco',
-  path: '/eco',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CovoiturageRoute = CovoiturageRouteImport.update({
-  id: '/covoiturage',
-  path: '/covoiturage',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CommunityRoute = CommunityRouteImport.update({
-  id: '/community',
-  path: '/community',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CoachSanteRoute = CoachSanteRouteImport.update({
-  id: '/coach-sante',
-  path: '/coach-sante',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChatRoute = ChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CarpoolRoute = CarpoolRouteImport.update({
-  id: '/carpool',
-  path: '/carpool',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BusinessRoute = BusinessRouteImport.update({
-  id: '/business',
-  path: '/business',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BtpRoute = BtpRouteImport.update({
-  id: '/btp',
-  path: '/btp',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -159,30 +50,145 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const BtpRoute = BtpRouteImport.update({
+  id: '/btp',
+  path: '/btp',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UIdRoute = UIdRouteImport.update({
-  id: '/u/$id',
-  path: '/u/$id',
+const BusinessRoute = BusinessRouteImport.update({
+  id: '/business',
+  path: '/business',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ListingsIdRoute = ListingsIdRouteImport.update({
+const CarpoolRoute = CarpoolRouteImport.update({
+  id: '/carpool',
+  path: '/carpool',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoachSanteRoute = CoachSanteRouteImport.update({
+  id: '/coach-sante',
+  path: '/coach-sante',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityRoute = CommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CovoiturageRoute = CovoiturageRouteImport.update({
+  id: '/covoiturage',
+  path: '/covoiturage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EcoRoute = EcoRouteImport.update({
+  id: '/eco',
+  path: '/eco',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForumRoute = ForumRouteImport.update({
+  id: '/forum',
+  path: '/forum',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealthCoachRoute = HealthCoachRouteImport.update({
+  id: '/health-coach',
+  path: '/health-coach',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListingsRoute = ListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsPreferencesRoute = NewsPreferencesRouteImport.update({
+  id: '/news-preferences',
+  path: '/news-preferences',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PetsRoute = PetsRouteImport.update({
+  id: '/pets',
+  path: '/pets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecipesRoute = RecipesRouteImport.update({
+  id: '/recipes',
+  path: '/recipes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SocialRoute = SocialRouteImport.update({
+  id: '/social',
+  path: '/social',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SolidarityRoute = SolidarityRouteImport.update({
+  id: '/solidarity',
+  path: '/solidarity',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SolutionsRoute = SolutionsRouteImport.update({
+  id: '/solutions',
+  path: '/solutions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrocRoute = TrocRouteImport.update({
+  id: '/troc',
+  path: '/troc',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TvFeedRoute = TvFeedRouteImport.update({
+  id: '/tv-feed',
+  path: '/tv-feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WeatherRoute = WeatherRouteImport.update({
+  id: '/weather',
+  path: '/weather',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WeatherSmartRoute = WeatherSmartRouteImport.update({
+  id: '/weather-smart',
+  path: '/weather-smart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WhatsImportantRoute = WhatsImportantRouteImport.update({
+  id: '/whats-important',
+  path: '/whats-important',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityIdRoute = CommunityIdRouteImport.update({
   id: '/$id',
   path: '/$id',
-  getParentRoute: () => ListingsRoute,
+  getParentRoute: () => CommunityRoute,
 } as any)
 const ForumIdRoute = ForumIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => ForumRoute,
 } as any)
-const CommunityIdRoute = CommunityIdRouteImport.update({
+const ListingsIdRoute = ListingsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
-  getParentRoute: () => CommunityRoute,
+  getParentRoute: () => ListingsRoute,
+} as any)
+const UIdRoute = UIdRouteImport.update({
+  id: '/u/$id',
+  path: '/u/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
+  id: '/api/public/health',
+  path: '/api/public/health',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/forum/$id': typeof ForumIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/u/$id': typeof UIdRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -246,6 +253,7 @@ export interface FileRoutesByTo {
   '/forum/$id': typeof ForumIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/u/$id': typeof UIdRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/forum/$id': typeof ForumIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/u/$id': typeof UIdRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -311,6 +320,7 @@ export interface FileRouteTypes {
     | '/forum/$id'
     | '/listings/$id'
     | '/u/$id'
+    | '/api/public/health'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -342,6 +352,7 @@ export interface FileRouteTypes {
     | '/forum/$id'
     | '/listings/$id'
     | '/u/$id'
+    | '/api/public/health'
   id:
     | '__root__'
     | '/'
@@ -373,6 +384,7 @@ export interface FileRouteTypes {
     | '/forum/$id'
     | '/listings/$id'
     | '/u/$id'
+    | '/api/public/health'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -402,169 +414,16 @@ export interface RootRouteChildren {
   WeatherSmartRoute: typeof WeatherSmartRoute
   WhatsImportantRoute: typeof WhatsImportantRoute
   UIdRoute: typeof UIdRoute
+  ApiPublicHealthRoute: typeof ApiPublicHealthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/whats-important': {
-      id: '/whats-important'
-      path: '/whats-important'
-      fullPath: '/whats-important'
-      preLoaderRoute: typeof WhatsImportantRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/weather-smart': {
-      id: '/weather-smart'
-      path: '/weather-smart'
-      fullPath: '/weather-smart'
-      preLoaderRoute: typeof WeatherSmartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/weather': {
-      id: '/weather'
-      path: '/weather'
-      fullPath: '/weather'
-      preLoaderRoute: typeof WeatherRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tv-feed': {
-      id: '/tv-feed'
-      path: '/tv-feed'
-      fullPath: '/tv-feed'
-      preLoaderRoute: typeof TvFeedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/troc': {
-      id: '/troc'
-      path: '/troc'
-      fullPath: '/troc'
-      preLoaderRoute: typeof TrocRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/solutions': {
-      id: '/solutions'
-      path: '/solutions'
-      fullPath: '/solutions'
-      preLoaderRoute: typeof SolutionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/solidarity': {
-      id: '/solidarity'
-      path: '/solidarity'
-      fullPath: '/solidarity'
-      preLoaderRoute: typeof SolidarityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/social': {
-      id: '/social'
-      path: '/social'
-      fullPath: '/social'
-      preLoaderRoute: typeof SocialRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recipes': {
-      id: '/recipes'
-      path: '/recipes'
-      fullPath: '/recipes'
-      preLoaderRoute: typeof RecipesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pets': {
-      id: '/pets'
-      path: '/pets'
-      fullPath: '/pets'
-      preLoaderRoute: typeof PetsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/news-preferences': {
-      id: '/news-preferences'
-      path: '/news-preferences'
-      fullPath: '/news-preferences'
-      preLoaderRoute: typeof NewsPreferencesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/news': {
-      id: '/news'
-      path: '/news'
-      fullPath: '/news'
-      preLoaderRoute: typeof NewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/listings': {
-      id: '/listings'
-      path: '/listings'
-      fullPath: '/listings'
-      preLoaderRoute: typeof ListingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/health-coach': {
-      id: '/health-coach'
-      path: '/health-coach'
-      fullPath: '/health-coach'
-      preLoaderRoute: typeof HealthCoachRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/forum': {
-      id: '/forum'
-      path: '/forum'
-      fullPath: '/forum'
-      preLoaderRoute: typeof ForumRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/eco': {
-      id: '/eco'
-      path: '/eco'
-      fullPath: '/eco'
-      preLoaderRoute: typeof EcoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/covoiturage': {
-      id: '/covoiturage'
-      path: '/covoiturage'
-      fullPath: '/covoiturage'
-      preLoaderRoute: typeof CovoiturageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/community': {
-      id: '/community'
-      path: '/community'
-      fullPath: '/community'
-      preLoaderRoute: typeof CommunityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/coach-sante': {
-      id: '/coach-sante'
-      path: '/coach-sante'
-      fullPath: '/coach-sante'
-      preLoaderRoute: typeof CoachSanteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chat': {
-      id: '/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof ChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/carpool': {
-      id: '/carpool'
-      path: '/carpool'
-      fullPath: '/carpool'
-      preLoaderRoute: typeof CarpoolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/business': {
-      id: '/business'
-      path: '/business'
-      fullPath: '/business'
-      preLoaderRoute: typeof BusinessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/btp': {
-      id: '/btp'
-      path: '/btp'
-      fullPath: '/btp'
-      preLoaderRoute: typeof BtpRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -574,26 +433,173 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/btp': {
+      id: '/btp'
+      path: '/btp'
+      fullPath: '/btp'
+      preLoaderRoute: typeof BtpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/u/$id': {
-      id: '/u/$id'
-      path: '/u/$id'
-      fullPath: '/u/$id'
-      preLoaderRoute: typeof UIdRouteImport
+    '/business': {
+      id: '/business'
+      path: '/business'
+      fullPath: '/business'
+      preLoaderRoute: typeof BusinessRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/listings/$id': {
-      id: '/listings/$id'
+    '/carpool': {
+      id: '/carpool'
+      path: '/carpool'
+      fullPath: '/carpool'
+      preLoaderRoute: typeof CarpoolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coach-sante': {
+      id: '/coach-sante'
+      path: '/coach-sante'
+      fullPath: '/coach-sante'
+      preLoaderRoute: typeof CoachSanteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/community': {
+      id: '/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof CommunityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/covoiturage': {
+      id: '/covoiturage'
+      path: '/covoiturage'
+      fullPath: '/covoiturage'
+      preLoaderRoute: typeof CovoiturageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eco': {
+      id: '/eco'
+      path: '/eco'
+      fullPath: '/eco'
+      preLoaderRoute: typeof EcoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forum': {
+      id: '/forum'
+      path: '/forum'
+      fullPath: '/forum'
+      preLoaderRoute: typeof ForumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/health-coach': {
+      id: '/health-coach'
+      path: '/health-coach'
+      fullPath: '/health-coach'
+      preLoaderRoute: typeof HealthCoachRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/listings': {
+      id: '/listings'
+      path: '/listings'
+      fullPath: '/listings'
+      preLoaderRoute: typeof ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news-preferences': {
+      id: '/news-preferences'
+      path: '/news-preferences'
+      fullPath: '/news-preferences'
+      preLoaderRoute: typeof NewsPreferencesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pets': {
+      id: '/pets'
+      path: '/pets'
+      fullPath: '/pets'
+      preLoaderRoute: typeof PetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recipes': {
+      id: '/recipes'
+      path: '/recipes'
+      fullPath: '/recipes'
+      preLoaderRoute: typeof RecipesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/social': {
+      id: '/social'
+      path: '/social'
+      fullPath: '/social'
+      preLoaderRoute: typeof SocialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solidarity': {
+      id: '/solidarity'
+      path: '/solidarity'
+      fullPath: '/solidarity'
+      preLoaderRoute: typeof SolidarityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solutions': {
+      id: '/solutions'
+      path: '/solutions'
+      fullPath: '/solutions'
+      preLoaderRoute: typeof SolutionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/troc': {
+      id: '/troc'
+      path: '/troc'
+      fullPath: '/troc'
+      preLoaderRoute: typeof TrocRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tv-feed': {
+      id: '/tv-feed'
+      path: '/tv-feed'
+      fullPath: '/tv-feed'
+      preLoaderRoute: typeof TvFeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/weather': {
+      id: '/weather'
+      path: '/weather'
+      fullPath: '/weather'
+      preLoaderRoute: typeof WeatherRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/weather-smart': {
+      id: '/weather-smart'
+      path: '/weather-smart'
+      fullPath: '/weather-smart'
+      preLoaderRoute: typeof WeatherSmartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/whats-important': {
+      id: '/whats-important'
+      path: '/whats-important'
+      fullPath: '/whats-important'
+      preLoaderRoute: typeof WhatsImportantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/community/$id': {
+      id: '/community/$id'
       path: '/$id'
-      fullPath: '/listings/$id'
-      preLoaderRoute: typeof ListingsIdRouteImport
-      parentRoute: typeof ListingsRoute
+      fullPath: '/community/$id'
+      preLoaderRoute: typeof CommunityIdRouteImport
+      parentRoute: typeof CommunityRoute
     }
     '/forum/$id': {
       id: '/forum/$id'
@@ -602,12 +608,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForumIdRouteImport
       parentRoute: typeof ForumRoute
     }
-    '/community/$id': {
-      id: '/community/$id'
+    '/listings/$id': {
+      id: '/listings/$id'
       path: '/$id'
-      fullPath: '/community/$id'
-      preLoaderRoute: typeof CommunityIdRouteImport
-      parentRoute: typeof CommunityRoute
+      fullPath: '/listings/$id'
+      preLoaderRoute: typeof ListingsIdRouteImport
+      parentRoute: typeof ListingsRoute
+    }
+    '/u/$id': {
+      id: '/u/$id'
+      path: '/u/$id'
+      fullPath: '/u/$id'
+      preLoaderRoute: typeof UIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/health': {
+      id: '/api/public/health'
+      path: '/api/public/health'
+      fullPath: '/api/public/health'
+      preLoaderRoute: typeof ApiPublicHealthRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -673,6 +693,7 @@ const rootRouteChildren: RootRouteChildren = {
   WeatherSmartRoute: WeatherSmartRoute,
   WhatsImportantRoute: WhatsImportantRoute,
   UIdRoute: UIdRoute,
+  ApiPublicHealthRoute: ApiPublicHealthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

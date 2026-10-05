@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { Hammer, FileText, Badge, MessageSquare, Star, MapPin } from 'lucide-react';
 
 export const Route = createFileRoute('/btp')({
-  meta: [
+  head: () => ({ meta: [
     { title: "BTP & Artisans - Assistant Citoyen" },
     { name: "description", content: "Profils pros, bourse sous-traitance, SIRET vérifié" },
-  ],
+  ] }),
   component: BtpComponent,
 });
 

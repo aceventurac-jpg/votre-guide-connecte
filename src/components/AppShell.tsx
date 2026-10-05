@@ -66,7 +66,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               return (
                 <Link
                   key={n.to}
-                  to={n.to}
+                  to={n.to as any}
                   className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition ${
                     active ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground"
                   }`}

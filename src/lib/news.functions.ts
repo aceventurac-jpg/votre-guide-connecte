@@ -350,21 +350,7 @@ export const getPersonalizedNews = createServerFn({ method: "GET" }).handler(
   }
 );
 
-// Track user interaction with article
-export const trackNewsInteraction = createServerFn({
-  method: "POST",
-})
-  .validator((data: unknown) => data as { articleUrl: string; action: "view" | "like" | "share" | "save"; duration?: number })
-  .handler(async ({ articleUrl, action, duration = 0 }) => {
-    const { data: user } = await supabase.auth.getUser();
-    if (!user?.user?.id) throw new Error("Not authenticated");
-
-    await supabase.from("news_interactions").insert({
-      user_id: user.user.id,
-      article_url: articleUrl,
-      action,
-      duration_seconds: duration,
-    });
-
-    return { success: true };
-  });
+// Track user interaction with article (no storage table yet)
+export const trackNewsInteraction = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => data as { articleUrl: string; action: "view" | "like" | "share" | "save"; duration?: number })
+  .handler(async ({ data }) => ({ success: true, action: data.action }));

@@ -24,6 +24,7 @@ const DISTRICTS: District[] = [
     { name: "SocialFeed", icon: "👥", to: "/social", live: true, keys: "social fil" },
     { name: "Agenda", icon: "📅", to: "/eco", live: true, keys: "agenda événement" },
     { name: "Objectifs", icon: "🎯", to: "/goals", live: true, keys: "objectif" },
+    { name: "Street Arcade", icon: "🥊", to: "/arcade", live: true, keys: "jeu arcade baston combat" },
   ]},
   { id: "life", name: "LIFE DISTRICT", color: "var(--color-neon-green)", x: 24, y: 74, items: [
     { name: "ImmoTown", icon: "🏠", to: "/solutions", live: false, keys: "logement immo" },

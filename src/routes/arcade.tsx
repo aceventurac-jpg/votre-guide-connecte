@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { RageGame, type Level } from "@/components/game/RageGame";
+import { CityMode } from "@/components/game/CityMode";
 
 export const Route = createFileRoute("/arcade")({
   head: () => ({
@@ -32,6 +33,7 @@ function Arcade() {
   const [draft, setDraft] = useState<Level>({ name: "Mon niveau", theme: "neon", waves: [2, 3], boss: true });
   const [code, setCode] = useState("");
   const [msg, setMsg] = useState("");
+  const [city, setCity] = useState(false);
 
   useEffect(() => { try { setMine(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch {} }, []);
   const save = (list: Level[]) => { setMine(list); localStorage.setItem(KEY, JSON.stringify(list)); };

@@ -10,7 +10,7 @@ import { useState } from "react";
 export const Route = createFileRoute("/carpool")({
   head: () => ({
     meta: [
-      { title: "Covoiturage — Assistant Citoyen" },
+      { title: "Covoiturage — SocialTown" },
       { name: "description", content: "Créer ou rejoindre un trajet, messagerie directe" },
     ],
   }),

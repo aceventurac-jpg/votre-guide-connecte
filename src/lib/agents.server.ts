@@ -121,7 +121,7 @@ Liens utiles (URL précise) parmi :
 - https://fr.khanacademy.org/
 - https://www.alloprof.qc.ca/${FORMAT}`,
 
-  general: `Tu es l'Assistant Citoyen, un compagnon bienveillant et clair. Réponds avec naturel, et propose au besoin d'orienter la conversation vers un univers plus précis (administratif, santé, voyage, services locaux, commerce international, apprentissage).${FORMAT}`,
+  general: `Tu es SocialTown, un compagnon bienveillant et clair. Réponds avec naturel, et propose au besoin d'orienter la conversation vers un univers plus précis (administratif, santé, voyage, services locaux, commerce international, apprentissage).${FORMAT}`,
 };
 
 export const ORCHESTRATOR_PROMPT = `Tu es un routeur d'intentions. Analyse le dernier message de l'utilisateur et choisis exactement UNE catégorie parmi :

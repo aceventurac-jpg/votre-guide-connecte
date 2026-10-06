@@ -9,7 +9,7 @@ import { useState } from "react";
 export const Route = createFileRoute("/business")({
   head: () => ({
     meta: [
-      { title: "Pro & Commerce — Assistant Citoyen" },
+      { title: "Pro & Commerce — SocialTown" },
       { name: "description", content: "Catalogue, devis et factures PDF par IA" },
     ],
   }),

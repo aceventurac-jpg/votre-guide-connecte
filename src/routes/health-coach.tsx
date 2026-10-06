@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export const Route = createFileRoute("/health-coach")({
   head: () => ({
     meta: [
-      { title: "Coach Santé — Assistant Citoyen" },
+      { title: "Coach Santé — SocialTown" },
       { name: "description", content: "Nutrition, sport, sommeil, méditation — ton coach personnel" },
     ],
   }),

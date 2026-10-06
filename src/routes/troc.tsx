@@ -12,9 +12,9 @@ import { listListings } from "@/lib/listings.functions";
 export const Route = createFileRoute("/troc")({
   head: () => ({
     meta: [
-      { title: "Troc & Dons — Assistant Citoyen" },
+      { title: "Troc & Dons — SocialTown" },
       { name: "description", content: "Donne, échange et récupère gratuitement : vêtements, jouets, fournitures scolaires et matériel du quotidien." },
-      { property: "og:title", content: "Troc & Dons — Assistant Citoyen" },
+      { property: "og:title", content: "Troc & Dons — SocialTown" },
       { property: "og:description", content: "Donne, échange et récupère gratuitement près de chez toi." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

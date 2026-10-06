@@ -9,7 +9,7 @@ import { listPosts } from "@/lib/community.functions";
 export const Route = createFileRoute("/social")({
   head: () => ({
     meta: [
-      { title: "Fil social — Assistant Citoyen" },
+      { title: "Fil social — SocialTown" },
       { name: "description", content: "Découvre ce qui se passe près de chez toi en temps réel." },
     ],
   }),

@@ -17,7 +17,7 @@ import { useIsAuthed } from "@/hooks/use-auth";
 const chatSearch = z.object({ agent: z.enum(AGENT_ORDER as [AgentKey, ...AgentKey[]]).optional() });
 
 export const Route = createFileRoute("/chat")({
-  head: () => ({ meta: [{ title: "Chat — Assistant Citoyen" }] }),
+  head: () => ({ meta: [{ title: "Chat — SocialTown" }] }),
   validateSearch: chatSearch,
   component: ChatPage,
 });

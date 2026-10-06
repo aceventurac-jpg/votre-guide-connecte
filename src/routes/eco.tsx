@@ -10,7 +10,7 @@ import { Leaf, Calendar, MapPin, Users, Plus, TrendingUp } from "lucide-react";
 export const Route = createFileRoute("/eco")({
   head: () => ({
     meta: [
-      { title: "Action Éco — Assistant Citoyen" },
+      { title: "Action Éco — SocialTown" },
       { name: "description", content: "Rejoins les actions éco locales, crée tes événements en 3 clics." },
     ],
   }),

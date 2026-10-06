@@ -16,7 +16,7 @@ import { Plus, Star, ShieldCheck, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/listings")({
-  head: () => ({ meta: [{ title: "Annonces — Assistant Citoyen" }] }),
+  head: () => ({ meta: [{ title: "Annonces — SocialTown" }] }),
   component: ListingsPage,
 });
 

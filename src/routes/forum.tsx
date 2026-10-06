@@ -15,9 +15,9 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/forum")({
   head: () => ({
     meta: [
-      { title: "Entraide locale — Assistant Citoyen" },
+      { title: "Entraide locale — SocialTown" },
       { name: "description", content: "Demande ou propose un coup de main près de chez toi : courses, bricolage, garde, transport." },
-      { property: "og:title", content: "Entraide locale — Assistant Citoyen" },
+      { property: "og:title", content: "Entraide locale — SocialTown" },
       { property: "og:description", content: "Demande ou propose un coup de main près de chez toi." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

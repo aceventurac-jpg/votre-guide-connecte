@@ -12,8 +12,8 @@ import { Sparkles } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Connexion — Assistant Citoyen" },
-      { name: "description", content: "Connecte-toi à l'Assistant Citoyen pour poser tes questions du quotidien." },
+      { title: "Connexion — SocialTown" },
+      { name: "description", content: "Connecte-toi à SocialTown pour poser tes questions du quotidien." },
     ],
   }),
   component: AuthPage,
@@ -70,7 +70,7 @@ function AuthPage() {
           <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-primary text-primary-foreground">
             <Sparkles className="size-6" />
           </div>
-          <h1 className="text-2xl font-semibold">Assistant Citoyen</h1>
+          <h1 className="text-2xl font-semibold">SocialTown</h1>
           <p className="text-sm text-muted-foreground">Pose ta question, on s'occupe du reste.</p>
         </div>
 

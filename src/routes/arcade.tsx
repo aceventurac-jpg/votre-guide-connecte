@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { RageGame, type Level } from "@/components/game/RageGame";
+import { CityMode } from "@/components/game/CityMode";
 
 export const Route = createFileRoute("/arcade")({
   head: () => ({
@@ -32,9 +33,17 @@ function Arcade() {
   const [draft, setDraft] = useState<Level>({ name: "Mon niveau", theme: "neon", waves: [2, 3], boss: true });
   const [code, setCode] = useState("");
   const [msg, setMsg] = useState("");
+  const [city, setCity] = useState(false);
 
   useEffect(() => { try { setMine(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch {} }, []);
   const save = (list: Level[]) => { setMine(list); localStorage.setItem(KEY, JSON.stringify(list)); };
+
+  if (city) return (
+    <div className="min-h-screen bg-background p-4 max-w-3xl mx-auto">
+      <h1 className="text-xl font-black mb-2">VILLE LIBRE</h1>
+      <CityMode onExit={() => setCity(false)} />
+    </div>
+  );
 
   if (playing) return (
     <div className="min-h-screen bg-background p-4">
@@ -62,6 +71,16 @@ function Arcade() {
         <h1 className="text-4xl font-black tracking-tight">STREET ARCADE</h1>
         <p className="text-muted-foreground">Ici, tu ne fais pas que jouer : tu crées tes propres niveaux.</p>
       </header>
+
+      <button
+        onClick={() => setCity(true)}
+        className="w-full rounded-xl border-2 border-primary p-4 text-left hover:bg-secondary/50 transition"
+      >
+        <div className="font-black text-lg">🌆 VILLE LIBRE — exploration + baston + gangs</div>
+        <div className="text-sm text-muted-foreground">
+          Explore la ville, monte dans des véhicules, accepte des missions de gangs réglées à coups de poing, personnalise ton avatar et crée ton gang.
+        </div>
+      </button>
 
       <section className="space-y-2"><h2 className="font-bold text-lg">Niveaux officiels</h2>{OFFICIAL.map((l) => <Card key={l.name} l={l} />)}</section>
 

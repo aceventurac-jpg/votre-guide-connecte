@@ -14,6 +14,7 @@ import { Route as ArcadeRouteImport } from './routes/arcade'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BtpRouteImport } from './routes/btp'
 import { Route as BusinessRouteImport } from './routes/business'
+import { Route as CameraRouteImport } from './routes/camera'
 import { Route as CarpoolRouteImport } from './routes/carpool'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CoachSanteRouteImport } from './routes/coach-sante'
@@ -27,6 +28,7 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as NewsPreferencesRouteImport } from './routes/news-preferences'
 import { Route as PetsRouteImport } from './routes/pets'
 import { Route as RecipesRouteImport } from './routes/recipes'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SocialRouteImport } from './routes/social'
 import { Route as SolidarityRouteImport } from './routes/solidarity'
 import { Route as SolutionsRouteImport } from './routes/solutions'
@@ -64,6 +66,11 @@ const BtpRoute = BtpRouteImport.update({
 const BusinessRoute = BusinessRouteImport.update({
   id: '/business',
   path: '/business',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CameraRoute = CameraRouteImport.update({
+  id: '/camera',
+  path: '/camera',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CarpoolRoute = CarpoolRouteImport.update({
@@ -129,6 +136,11 @@ const PetsRoute = PetsRouteImport.update({
 const RecipesRoute = RecipesRouteImport.update({
   id: '/recipes',
   path: '/recipes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SocialRoute = SocialRouteImport.update({
@@ -203,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/btp': typeof BtpRoute
   '/business': typeof BusinessRoute
+  '/camera': typeof CameraRoute
   '/carpool': typeof CarpoolRoute
   '/chat': typeof ChatRoute
   '/coach-sante': typeof CoachSanteRoute
@@ -216,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/news-preferences': typeof NewsPreferencesRoute
   '/pets': typeof PetsRoute
   '/recipes': typeof RecipesRoute
+  '/settings': typeof SettingsRoute
   '/social': typeof SocialRoute
   '/solidarity': typeof SolidarityRoute
   '/solutions': typeof SolutionsRoute
@@ -236,6 +250,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/btp': typeof BtpRoute
   '/business': typeof BusinessRoute
+  '/camera': typeof CameraRoute
   '/carpool': typeof CarpoolRoute
   '/chat': typeof ChatRoute
   '/coach-sante': typeof CoachSanteRoute
@@ -249,6 +264,7 @@ export interface FileRoutesByTo {
   '/news-preferences': typeof NewsPreferencesRoute
   '/pets': typeof PetsRoute
   '/recipes': typeof RecipesRoute
+  '/settings': typeof SettingsRoute
   '/social': typeof SocialRoute
   '/solidarity': typeof SolidarityRoute
   '/solutions': typeof SolutionsRoute
@@ -270,6 +286,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/btp': typeof BtpRoute
   '/business': typeof BusinessRoute
+  '/camera': typeof CameraRoute
   '/carpool': typeof CarpoolRoute
   '/chat': typeof ChatRoute
   '/coach-sante': typeof CoachSanteRoute
@@ -283,6 +300,7 @@ export interface FileRoutesById {
   '/news-preferences': typeof NewsPreferencesRoute
   '/pets': typeof PetsRoute
   '/recipes': typeof RecipesRoute
+  '/settings': typeof SettingsRoute
   '/social': typeof SocialRoute
   '/solidarity': typeof SolidarityRoute
   '/solutions': typeof SolutionsRoute
@@ -305,6 +323,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/btp'
     | '/business'
+    | '/camera'
     | '/carpool'
     | '/chat'
     | '/coach-sante'
@@ -318,6 +337,7 @@ export interface FileRouteTypes {
     | '/news-preferences'
     | '/pets'
     | '/recipes'
+    | '/settings'
     | '/social'
     | '/solidarity'
     | '/solutions'
@@ -338,6 +358,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/btp'
     | '/business'
+    | '/camera'
     | '/carpool'
     | '/chat'
     | '/coach-sante'
@@ -351,6 +372,7 @@ export interface FileRouteTypes {
     | '/news-preferences'
     | '/pets'
     | '/recipes'
+    | '/settings'
     | '/social'
     | '/solidarity'
     | '/solutions'
@@ -371,6 +393,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/btp'
     | '/business'
+    | '/camera'
     | '/carpool'
     | '/chat'
     | '/coach-sante'
@@ -384,6 +407,7 @@ export interface FileRouteTypes {
     | '/news-preferences'
     | '/pets'
     | '/recipes'
+    | '/settings'
     | '/social'
     | '/solidarity'
     | '/solutions'
@@ -405,6 +429,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BtpRoute: typeof BtpRoute
   BusinessRoute: typeof BusinessRoute
+  CameraRoute: typeof CameraRoute
   CarpoolRoute: typeof CarpoolRoute
   ChatRoute: typeof ChatRoute
   CoachSanteRoute: typeof CoachSanteRoute
@@ -418,6 +443,7 @@ export interface RootRouteChildren {
   NewsPreferencesRoute: typeof NewsPreferencesRoute
   PetsRoute: typeof PetsRoute
   RecipesRoute: typeof RecipesRoute
+  SettingsRoute: typeof SettingsRoute
   SocialRoute: typeof SocialRoute
   SolidarityRoute: typeof SolidarityRoute
   SolutionsRoute: typeof SolutionsRoute
@@ -465,6 +491,13 @@ declare module '@tanstack/react-router' {
       path: '/business'
       fullPath: '/business'
       preLoaderRoute: typeof BusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/camera': {
+      id: '/camera'
+      path: '/camera'
+      fullPath: '/camera'
+      preLoaderRoute: typeof CameraRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/carpool': {
@@ -556,6 +589,13 @@ declare module '@tanstack/react-router' {
       path: '/recipes'
       fullPath: '/recipes'
       preLoaderRoute: typeof RecipesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/social': {
@@ -692,6 +732,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BtpRoute: BtpRoute,
   BusinessRoute: BusinessRoute,
+  CameraRoute: CameraRoute,
   CarpoolRoute: CarpoolRoute,
   ChatRoute: ChatRoute,
   CoachSanteRoute: CoachSanteRoute,
@@ -705,6 +746,7 @@ const rootRouteChildren: RootRouteChildren = {
   NewsPreferencesRoute: NewsPreferencesRoute,
   PetsRoute: PetsRoute,
   RecipesRoute: RecipesRoute,
+  SettingsRoute: SettingsRoute,
   SocialRoute: SocialRoute,
   SolidarityRoute: SolidarityRoute,
   SolutionsRoute: SolutionsRoute,

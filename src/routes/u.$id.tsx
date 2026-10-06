@@ -12,9 +12,9 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/u/$id")({
   head: () => ({
     meta: [
-      { title: "Profil d'un membre — Assistant Citoyen" },
-      { name: "description", content: "Publications, annonces et avis d'un membre de la communauté Assistant Citoyen." },
-      { property: "og:title", content: "Profil d'un membre — Assistant Citoyen" },
+      { title: "Profil d'un membre — SocialTown" },
+      { name: "description", content: "Publications, annonces et avis d'un membre de la communauté SocialTown." },
+      { property: "og:title", content: "Profil d'un membre — SocialTown" },
       { property: "og:description", content: "Publications, annonces et avis d'un membre de la communauté." },
       { property: "og:type", content: "profile" },
       { name: "twitter:card", content: "summary" },

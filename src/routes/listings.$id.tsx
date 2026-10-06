@@ -16,7 +16,7 @@ import { ArrowLeft, ShieldCheck, Star, Flag, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/listings/$id")({
-  head: () => ({ meta: [{ title: "Annonce — Assistant Citoyen" }] }),
+  head: () => ({ meta: [{ title: "Annonce — SocialTown" }] }),
   component: ListingDetail,
 });
 

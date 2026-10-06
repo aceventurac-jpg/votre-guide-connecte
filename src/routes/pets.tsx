@@ -17,7 +17,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/pets")({
   head: () => ({
     meta: [
-      { title: "Animaux — rencontres et balades | Assistant Citoyen" },
+      { title: "Animaux — rencontres et balades | SocialTown" },
       { name: "description", content: "Présente ton animal, trouve des compagnons de balade près de chez toi et organise une rencontre." },
       { property: "og:title", content: "Animaux — rencontres et balades" },
       { property: "og:description", content: "Trouve des compagnons de balade près de chez toi." },

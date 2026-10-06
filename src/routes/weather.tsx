@@ -8,7 +8,7 @@ import { useState } from "react";
 export const Route = createFileRoute("/weather")({
   head: () => ({
     meta: [
-      { title: "Météo Intelligente — Assistant Citoyen" },
+      { title: "Météo Intelligente — SocialTown" },
       { name: "description", content: "Météo expliquée simplement avec alertes pluie" },
     ],
   }),

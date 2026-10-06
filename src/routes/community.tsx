@@ -21,7 +21,7 @@ const search = z.object({
 });
 
 export const Route = createFileRoute("/community")({
-  head: () => ({ meta: [{ title: "Communauté — Assistant Citoyen" }] }),
+  head: () => ({ meta: [{ title: "Communauté — SocialTown" }] }),
   validateSearch: search,
   component: CommunityPage,
 });

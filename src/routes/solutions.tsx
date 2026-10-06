@@ -9,7 +9,7 @@ import { Star, MapPin, Phone, MessageSquare, Clock, Briefcase, Filter } from "lu
 export const Route = createFileRoute("/solutions")({
   head: () => ({
     meta: [
-      { title: "Solutions à domicile — Assistant Citoyen" },
+      { title: "Solutions à domicile — SocialTown" },
       { name: "description", content: "Trouve les services et prestataires près de chez toi avec avis vérifiés." },
     ],
   }),

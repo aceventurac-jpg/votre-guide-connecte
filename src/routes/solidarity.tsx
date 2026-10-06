@@ -9,7 +9,7 @@ import { useState } from "react";
 export const Route = createFileRoute("/solidarity")({
   head: () => ({
     meta: [
-      { title: "Solidarité — Assistant Citoyen" },
+      { title: "Solidarité — SocialTown" },
       { name: "description", content: "Cagnottes et actions solidaires pour s'entraider" },
     ],
   }),

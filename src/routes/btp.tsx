@@ -4,7 +4,7 @@ import { Hammer, FileText, Badge, MessageSquare, Star, MapPin } from 'lucide-rea
 
 export const Route = createFileRoute('/btp')({
   head: () => ({ meta: [
-    { title: "BTP & Artisans - Assistant Citoyen" },
+    { title: "BTP & Artisans - SocialTown" },
     { name: "description", content: "Profils pros, bourse sous-traitance, SIRET vérifié" },
   ] }),
   component: BtpComponent,

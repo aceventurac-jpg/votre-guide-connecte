@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Sparkles, MessageCircle, Users, Store, History, LogOut, LogIn, Home, BookOpen, Target, HandHeart, PawPrint, Gift, Mail, Flame, Briefcase, Leaf, Dumbbell, Cloud, Car, Hammer, Heart, Newspaper, AlertCircle, Settings } from "lucide-react";
+import { Sparkles, MessageCircle, Users, Store, History, LogOut, LogIn, Home, BookOpen, Target, HandHeart, PawPrint, Gift, Mail, Flame, Briefcase, Leaf, Dumbbell, Cloud, Car, Hammer, Heart, Newspaper, AlertCircle, Settings, Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { UniverseHorizontalNav } from "@/components/UniverseHorizontalNav";
 import type { ReactNode } from "react";
 
 const NAV = [
+  { to: "/camera", label: "Caméra", icon: Camera, authOnly: false },
   { to: "/social", label: "Fil social", icon: Flame, authOnly: false },
   { to: "/chat", label: "Chat", icon: MessageCircle, authOnly: false },
   { to: "/community", label: "Communauté", icon: Users, authOnly: false },
@@ -31,7 +32,7 @@ const NAV = [
   { to: "/messages", label: "Messages", icon: Mail, authOnly: true },
   { to: "/goals", label: "Objectifs", icon: Target, authOnly: true },
   { to: "/history", label: "Historique", icon: History, authOnly: true },
-  { to: "/news-preferences", label: "Préférences", icon: Settings, authOnly: true },
+  { to: "/settings", label: "Réglages", icon: Settings, authOnly: false },
 ] as const;
 
 // Pages avec la barre d'univers horizontale
@@ -57,7 +58,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="px-4 md:px-6 h-14 flex items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <GradientHexagonLogo className="size-8" />
-            <span className="hidden sm:inline">Votre Guide</span>
+            <span className="hidden sm:inline">SocialTown</span>
           </Link>
           <nav className="flex items-center gap-1 overflow-x-auto">
             {NAV.filter((n) => !n.authOnly || authed).map((n) => {

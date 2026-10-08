@@ -122,6 +122,8 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
     return () => { cancelAnimationFrame(raf); window.removeEventListener("keydown", kd); window.removeEventListener("keyup", ku); };
   }, [level]);
 
+  const [touch] = useState(() => getArcadeSettings().touchControls);
+  const touchCls = touch === "always" ? "" : touch === "never" ? "hidden" : "md:hidden";
   const press = (k: string, v: boolean) => { keys.current[k] = v; };
   const Btn = ({ k, label }: { k: string; label: string }) => (
     <button className="size-14 rounded-full bg-primary/80 text-primary-foreground font-bold select-none touch-none"
@@ -139,7 +141,7 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
         <canvas ref={ref} width={W} height={H} className="w-full bg-black [image-rendering:pixelated]" />
         {hud.over && <div className="absolute inset-0 grid place-items-center bg-black/60 text-4xl font-black text-yellow-300">{hud.over}</div>}
       </div>
-      <div className="flex justify-between p-3 md:hidden">
+      <div className={`flex justify-between p-3 ${touchCls}`}>
         <div className="grid grid-cols-3 gap-1">
           <span /><Btn k="arrowup" label="▲" /><span />
           <Btn k="arrowleft" label="◀" /><span /><Btn k="arrowright" label="▶" />

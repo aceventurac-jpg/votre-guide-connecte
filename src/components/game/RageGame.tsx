@@ -74,18 +74,18 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
         p.y = Math.max(TOP, Math.min(BOT, p.y)); p.x = Math.max(cam + 20, p.x);
         if ((k["j"] || k[" "]) && p.cd <= 0) {
           p.atk = 10; p.cd = 18;
-          foes.forEach((f) => { if (Math.abs(f.y - p.y) < 18 && (f.x - p.x) * p.dir > 0 && Math.abs(f.x - p.x) < (f.boss ? 55 : 45)) { f.hp -= 10; f.hit = 12; f.x += p.dir * 14; score += 100; shake = 5; } });
+          foes.forEach((f) => { if (Math.abs(f.y - p.y) < 18 && (f.x - p.x) * p.dir > 0 && Math.abs(f.x - p.x) < (f.boss ? 55 : 45)) { f.hp -= 10; f.hit = 12; f.x += p.dir * 14; score += 100; shake = 5; floats.push({ x: f.x, y: f.y - 80, txt: "-10", life: 30 }); } });
         }
-        if (k["l"] && p.cd <= 0 && p.hp > 10) {
-          p.atk = 20; p.cd = 40; p.hp -= 6; shake = 10;
-          foes.forEach((f) => { if (Math.abs(f.x - p.x) < 90 && Math.abs(f.y - p.y) < 40) { f.hp -= 25; f.hit = 15; f.x += Math.sign(f.x - p.x) * 40; score += 250; } });
+        if (k["l"] && p.cd <= 0 && (cfg.specialCost ? p.hp > 10 : true)) {
+          p.atk = 20; p.cd = 40; if (cfg.specialCost) p.hp -= 6; shake = 10;
+          foes.forEach((f) => { if (Math.abs(f.x - p.x) < 90 && Math.abs(f.y - p.y) < 40) { f.hp -= 25; f.hit = 15; f.x += Math.sign(f.x - p.x) * 40; score += 250; floats.push({ x: f.x, y: f.y - 80, txt: "-25", life: 30 }); } });
         }
         p.cd--; p.atk--; p.hit--;
         foes.forEach((f) => {
           f.hit--; f.atk--; f.cd--;
           const dx = p.x - f.x, dy = p.y - f.y; f.dir = dx > 0 ? 1 : -1;
-          if (f.hit <= 0) { if (Math.abs(dx) > 34) f.x += Math.sign(dx) * (f.boss ? 1.3 : 1.1); if (Math.abs(dy) > 3) f.y += Math.sign(dy) * 0.7; }
-          if (Math.abs(dx) < 38 && Math.abs(dy) < 14 && f.cd <= 0 && f.hit <= 0) { f.atk = 10; f.cd = f.boss ? 50 : 70; p.hp -= f.boss ? 14 : 7; p.hit = 12; shake = 4; }
+          if (f.hit <= 0) { if (Math.abs(dx) > 34) f.x += Math.sign(dx) * (f.boss ? 1.3 : 1.1) * diff.enemySpeed; if (Math.abs(dy) > 3) f.y += Math.sign(dy) * 0.7 * diff.enemySpeed; }
+          if (Math.abs(dx) < 38 && Math.abs(dy) < 14 && f.cd <= 0 && f.hit <= 0) { f.atk = 10; f.cd = f.boss ? 50 : 70; p.hp -= Math.round((f.boss ? 14 : 7) * diff.enemyDamage); p.hit = 12; shake = 4; }
         });
         foes = foes.filter((f) => { if (f.hp <= 0) { score += f.boss ? 5000 : 500; return false; } return true; });
         if (foes.length === 0) { cam = Math.max(cam, p.x - 200); if (p.x - cam > W - 120) cam += 2; if (frame % 90 === 0) spawn(); }

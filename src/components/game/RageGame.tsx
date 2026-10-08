@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { DIFFICULTY, getArcadeSettings } from "@/lib/arcade-settings";
 
 export type Level = { name: string; theme: "night" | "neon" | "dock"; waves: number[]; boss: boolean };
 

@@ -21,8 +21,11 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
   useEffect(() => {
     const c = ref.current!; const g = c.getContext("2d")!;
     const t = THEMES[level.theme];
-    const p: Ent = { x: 80, y: 280, hp: 100, max: 100, dir: 1, atk: 0, hit: 0, vx: 0, cd: 0 };
+    const cfg = getArcadeSettings();
+    const diff = DIFFICULTY[cfg.difficulty];
+    const p: Ent = { x: 80, y: 280, hp: diff.playerHp, max: diff.playerHp, dir: 1, atk: 0, hit: 0, vx: 0, cd: 0 };
     let foes: Ent[] = []; let wave = 0; let score = 0; let cam = 0; let shake = 0; let done = false;
+    const floats: { x: number; y: number; txt: string; life: number }[] = [];
     const waves = [...level.waves];
     const spawn = () => {
       const n = waves[wave];

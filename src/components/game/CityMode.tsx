@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { RageGame, type Level } from "./RageGame";
+import { getArcadeSettings } from "@/lib/arcade-settings";
 
 // ---------- Types ----------
 export type Avatar = { skin: string; shirt: string; hair: string; name: string };
@@ -129,11 +130,12 @@ function CityCanvas({ avatar, gang, onMission }: { avatar: Avatar; gang: Gang | 
     const c = ref.current!;
     const g = c.getContext("2d")!;
     const p = { x: 200, y: 260 };
-    const vehicles: Vehicle[] = [
+    const cfg = getArcadeSettings();
+    const vehicles: Vehicle[] = cfg.cityTraffic ? [
       { x: 420, y: 300, color: "#e74c3c", name: "Taxi" },
       { x: 1100, y: 180, color: "#3498db", name: "Muscle Car" },
       { x: 1900, y: 320, color: "#f1c40f", name: "Lowrider" },
-    ];
+    ] : [];
     const props: Prop[] = [
       { x: 520, y: 250, kind: "pipe" },
       { x: 1350, y: 290, kind: "bat" },
@@ -304,6 +306,8 @@ function CityCanvas({ avatar, gang, onMission }: { avatar: Avatar; gang: Gang | 
     };
   }, [avatar, gang, onMission]);
 
+  const [touch] = useState(() => getArcadeSettings().touchControls);
+  const touchCls = touch === "always" ? "" : touch === "never" ? "hidden" : "md:hidden";
   const press = (k: string, v: boolean) => { keys.current[k] = v; };
   const Btn = ({ k, label }: { k: string; label: string }) => (
     <button
@@ -323,7 +327,7 @@ function CityCanvas({ avatar, gang, onMission }: { avatar: Avatar; gang: Gang | 
         <span>{hud.near ? `⚑ ${hud.near} — appuie F` : "Explore la ville…"}</span>
       </div>
       <canvas ref={ref} width={W} height={H} className="w-full bg-black [image-rendering:pixelated]" />
-      <div className="flex justify-between p-3 md:hidden">
+      <div className={`flex justify-between p-3 ${touchCls}`}>
         <div className="grid grid-cols-3 gap-1">
           <span /><Btn k="arrowup" label="▲" /><span />
           <Btn k="arrowleft" label="◀" /><span /><Btn k="arrowright" label="▶" />

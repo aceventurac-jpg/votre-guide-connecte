@@ -16,7 +16,7 @@ const THEMES = {
 export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: number, win: boolean) => void }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const keys = useRef<Record<string, boolean>>({});
-  const [hud, setHud] = useState({ hp: 100, score: 0, wave: 1, over: "" });
+  const [hud, setHud] = useState({ hp: 100, max: 100, score: 0, wave: 1, over: "" });
 
   useEffect(() => {
     const c = ref.current!; const g = c.getContext("2d")!;
@@ -91,7 +91,7 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
         if (foes.length === 0) { cam = Math.max(cam, p.x - 200); if (p.x - cam > W - 120) cam += 2; if (frame % 90 === 0) spawn(); }
         else cam = Math.max(cam, Math.min(p.x - W / 2, cam));
         if (p.hp <= 0) { p.hp = 0; end(false); }
-        if (frame % 6 === 0) setHud((h) => ({ ...h, hp: p.hp, score, wave: Math.min(wave, waves.length) }));
+        if (frame % 6 === 0) setHud((h) => ({ ...h, hp: p.hp, max: p.max, score, wave: Math.min(wave, waves.length) }));
       }
       // render
       g.save(); if (cfg.screenShake && shake > 0) { g.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake); shake--; } else if (shake > 0) shake--;
@@ -132,7 +132,7 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
     <div className="w-full max-w-3xl mx-auto">
       <div className="flex justify-between items-center font-mono text-sm px-2 py-1 bg-foreground text-background rounded-t">
         <span>1UP {String(hud.score).padStart(6, "0")}</span>
-        <span className="flex items-center gap-2">HP <span className="w-32 h-3 bg-destructive/40 inline-block"><span className="block h-3 bg-yellow-400" style={{ width: `${hud.hp}%` }} /></span></span>
+        <span className="flex items-center gap-2">HP <span className="w-32 h-3 bg-destructive/40 inline-block"><span className="block h-3 bg-yellow-400" style={{ width: `${(hud.hp / hud.max) * 100}%` }} /></span></span>
         <span>VAGUE {hud.wave}/{level.waves.length}</span>
       </div>
       <div className="relative">

@@ -94,7 +94,7 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
         if (frame % 6 === 0) setHud((h) => ({ ...h, hp: p.hp, score, wave: Math.min(wave, waves.length) }));
       }
       // render
-      g.save(); if (shake > 0) { g.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake); shake--; }
+      g.save(); if (cfg.screenShake && shake > 0) { g.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake); shake--; } else if (shake > 0) shake--;
       const grd = g.createLinearGradient(0, 0, 0, TOP); grd.addColorStop(0, t.sky[0]); grd.addColorStop(1, t.sky[1]);
       g.fillStyle = grd; g.fillRect(0, 0, W, TOP);
       for (let i = -1; i < 12; i++) {
@@ -107,6 +107,14 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
       g.strokeStyle = "rgba(255,255,255,.08)";
       for (let i = 0; i < 14; i++) { const lx = i * 60 - cam % 60; g.beginPath(); g.moveTo(lx, TOP - 10); g.lineTo(lx - 60, H); g.stroke(); }
       [...foes, p].sort((a, b) => a.y - b.y).forEach((e) => e === p ? drawFighter(e, "#f5f5f5", "#ffd84a") : drawFighter(e, e.boss ? "#7a1fa2" : "#2a6", e.boss ? "#111" : "#a33"));
+      if (cfg.damageNumbers) {
+        g.font = "bold 12px monospace"; g.textAlign = "center";
+        for (let i = floats.length - 1; i >= 0; i--) {
+          const f = floats[i]; f.life--; f.y -= 0.8;
+          if (f.life <= 0) { floats.splice(i, 1); continue; }
+          g.fillStyle = "#ffd84a"; g.fillText(f.txt, f.x - cam, f.y);
+        }
+      }
       g.restore();
       raf = requestAnimationFrame(loop);
     };

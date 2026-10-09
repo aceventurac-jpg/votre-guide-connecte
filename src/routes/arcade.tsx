@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { RageGame, type Level } from "@/components/game/RageGame";
 import { CityMode } from "@/components/game/CityMode";
+import { DIFFICULTY, useArcadeSettings, type ArcadeSettings } from "@/lib/arcade-settings";
 
 export const Route = createFileRoute("/arcade")({
   head: () => ({
@@ -113,6 +114,79 @@ function Arcade() {
         </div>
         {msg && <p className="text-sm text-primary">{msg}</p>}
       </section>
+
+      <ArcadeSettingsPanel />
     </div>
+  );
+}
+
+function ArcadeSettingsPanel() {
+  const { settings, update, reset } = useArcadeSettings();
+
+  const Toggle = ({ k, label, hint }: { k: keyof ArcadeSettings; label: string; hint?: string }) => (
+    <label className="flex items-center justify-between gap-3 py-2">
+      <span>
+        <span className="block text-sm font-medium">{label}</span>
+        {hint && <span className="block text-xs text-muted-foreground">{hint}</span>}
+      </span>
+      <input
+        type="checkbox"
+        className="size-5 accent-primary"
+        checked={Boolean(settings[k])}
+        onChange={(e) => update({ [k]: e.target.checked } as Partial<ArcadeSettings>)}
+      />
+    </label>
+  );
+
+  return (
+    <section className="space-y-4 rounded-xl border p-4">
+      <div className="flex items-center justify-between">
+        <h2 className="font-bold text-lg">⚙️ Paramètres Street Arcade</h2>
+        <button onClick={reset} className="text-xs underline text-muted-foreground">Réinitialiser</button>
+      </div>
+
+      <div>
+        <div className="text-sm font-medium mb-1">Difficulté</div>
+        <div className="flex gap-2">
+          {(Object.keys(DIFFICULTY) as (keyof typeof DIFFICULTY)[]).map((d) => (
+            <button
+              key={d}
+              onClick={() => update({ difficulty: d })}
+              className={`px-3 py-1 rounded border text-sm ${settings.difficulty === d ? "bg-primary text-primary-foreground" : ""}`}
+            >
+              {DIFFICULTY[d].label}
+            </button>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          Facile : 150 PV, ennemis lents · Normal : 100 PV · Difficile : 70 PV, ennemis rapides et violents.
+        </p>
+      </div>
+
+      <div className="divide-y">
+        <Toggle k="screenShake" label="Tremblement d'écran" hint="Secousse lors des coups portés." />
+        <Toggle k="damageNumbers" label="Chiffres de dégâts" hint="Affiche les dégâts au-dessus des ennemis." />
+        <Toggle k="specialCost" label="La spéciale coûte de la vie" hint="Comme dans les beat 'em up classiques." />
+        <Toggle k="cityTraffic" label="Trafic en ville" hint="Véhicules conduisibles en Ville Libre." />
+      </div>
+
+      <div>
+        <div className="text-sm font-medium mb-1">Contrôles tactiles</div>
+        <div className="flex gap-2">
+          {([["auto", "Auto"], ["always", "Toujours"], ["never", "Jamais"]] as const).map(([v, label]) => (
+            <button
+              key={v}
+              onClick={() => update({ touchControls: v })}
+              className={`px-3 py-1 rounded border text-sm ${settings.touchControls === v ? "bg-primary text-primary-foreground" : ""}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">Auto : boutons affichés uniquement sur mobile.</p>
+      </div>
+
+      <p className="text-xs text-muted-foreground">Les réglages s'appliquent à la prochaine partie lancée et sont gardés sur cet appareil.</p>
+    </section>
   );
 }

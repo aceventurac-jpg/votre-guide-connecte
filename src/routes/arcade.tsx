@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { RageGame, type Level } from "@/components/game/RageGame";
 import { CityMode } from "@/components/game/CityMode";
+import { DIFFICULTY, useArcadeSettings, type ArcadeSettings } from "@/lib/arcade-settings";
 
 export const Route = createFileRoute("/arcade")({
   head: () => ({

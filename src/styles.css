@@ -139,6 +139,13 @@
 }
 
 @theme {
+  --font-display: "Syne", system-ui, sans-serif;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+  --color-town: #080c10;
+  --color-town-panel: #10161d;
+  --color-town-cyan: #00d8f0;
+  --color-town-coral: #ff6b6b;
+  --color-town-lemon: #e9f34a;
   --color-arcade: #070712;
   --color-arcade-panel: #11112a;
   --color-neon-cyan: #22e3ff;

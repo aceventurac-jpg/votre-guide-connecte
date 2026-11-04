@@ -115,9 +115,9 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   }
-  h1, h2, h3 { letter-spacing: -0.01em; }
+  h1, h2, h3 { font-family: "Syne", system-ui, sans-serif; letter-spacing: 0; }
 }
 
 @layer components {
@@ -170,4 +170,48 @@
 @utility heart-pop {
   animation: heart-pop 750ms ease-out forwards;
   color: var(--color-heart);
+}
+
+/* The city's shared surface system; district artwork supplies each imaginary. */
+:root, .dark {
+  --radius: 0.5rem;
+  --background: oklch(0.151 0.011 244);
+  --foreground: oklch(0.954 0.009 235);
+  --card: oklch(0.195 0.017 248);
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.806 0.139 210);
+  --primary-foreground: var(--background);
+  --secondary: oklch(0.259 0.025 244);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--secondary);
+  --muted-foreground: oklch(0.737 0.023 236);
+  --accent: oklch(0.718 0.172 22);
+  --accent-foreground: var(--background);
+  --border: oklch(0.343 0.025 242);
+  --input: var(--border);
+  --ring: var(--primary);
+  --sky-soft: var(--secondary);
+  --mauve-soft: var(--secondary);
+  --chat-user: var(--primary);
+  --chat-user-foreground: var(--primary-foreground);
+}
+
+.universe-cover-shade {
+  background: linear-gradient(90deg, var(--background), color-mix(in oklab, var(--background) 58%, transparent) 45%, transparent), linear-gradient(0deg, var(--background), transparent 55%);
+}
+.universe-cover { height: 560px; }
+.arcade-level-image { height: 170px; }
+.socialtown-universe input:not([type="checkbox"]):not([type="range"]), .socialtown-universe select {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--foreground);
+  padding: 10px 12px;
+}
+@media (max-width: 640px) {
+  .universe-cover { height: 440px; }
+  .universe-cover-shade { background: linear-gradient(0deg, var(--background), color-mix(in oklab, var(--background) 50%, transparent) 75%); }
 }

@@ -4,6 +4,9 @@
 - [ ] Définir clairement les cinq quartiers et leurs univers, recherche et accès aux réglages.
 - [ ] Moderniser les réglages et appliquer la visibilité/activation des applications à l’accueil.
 - [ ] Vérifier les parcours et la présentation sur petits et grands écrans.
+- [ ] Proposer Street Arcade dans un quartier futuriste cohérent avec l’accueil et demander validation avant de décliner les univers.
+- [ ] Étendre le socle visuel SocialTown à toutes les pages sans changer leurs fonctions.
+- [ ] Décliner les imaginaires et le paramétrage individuel des applications après confirmation des propositions.
 
 ## Hors de cette modernisation visuelle
 Les connecteurs réels, multijoueur partagé, paiements, sécurité des rencontres et publication mondiale des jeux nécessitent des développements distincts ; ne pas les présenter comme disponibles.

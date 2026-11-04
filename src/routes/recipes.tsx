@@ -3,6 +3,14 @@ import { useState } from 'react';
 import { Utensils, Camera, Sparkles, Flame, Clock } from 'lucide-react';
 
 export const Route = createFileRoute('/recipes')({
+  head: () => ({ meta: [
+    { title: "Recettes — SocialTown" },
+    { name: "description", content: "Idées anti-gaspillage au sein du Market District de SocialTown." },
+    { property: "og:title", content: "Recettes — SocialTown" },
+    { property: "og:description", content: "Idées anti-gaspillage au sein du Market District de SocialTown." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: () => <RecipesViewComponent />,
 });
 

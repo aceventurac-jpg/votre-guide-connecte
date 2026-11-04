@@ -3,6 +3,14 @@ import { useState } from 'react';
 import { Car, MapPin, Navigation, ArrowRight, ShieldCheck, CreditCard } from 'lucide-react';
 
 export const Route = createFileRoute('/covoiturage')({
+  head: () => ({ meta: [
+    { title: "Covoiturage — SocialTown" },
+    { name: "description", content: "Espace de covoiturage du quartier Mobility Grid." },
+    { property: "og:title", content: "Covoiturage — SocialTown" },
+    { property: "og:description", content: "Espace de covoiturage du quartier Mobility Grid." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: () => <CarpoolRealComponent />,
 });
 

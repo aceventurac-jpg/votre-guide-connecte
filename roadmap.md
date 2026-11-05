@@ -12,3 +12,10 @@
 
 ## Hors de cette modernisation visuelle
 Les connecteurs réels, multijoueur partagé, paiements, sécurité des rencontres et publication mondiale des jeux nécessitent des développements distincts ; ne pas les présenter comme disponibles.
+
+## Navigation dans la ville et commerces réels
+- [ ] Remplacer Ville Libre cubique par une promenade réaliste avec personnage et portes d’applications.
+- [ ] Ajouter un premier centre réel à Leers, sourcé, et un point d’entrée vers la Belgique.
+- [ ] Ouvrir les applications et les lieux depuis la promenade, vérifier sur ordinateur et téléphone.
+- [ ] Activer les achats réels : attend les connexions et autorisations des commerçants, sans simuler une commande.
+- [ ] Étendre à tous les commerces France/Belgique : nécessite des données de lieux vérifiées et leurs connexions commerciales.

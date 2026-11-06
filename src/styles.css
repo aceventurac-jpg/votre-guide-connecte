@@ -203,6 +203,17 @@
 }
 .universe-cover { height: 560px; }
 .arcade-level-image { height: 170px; }
+.city-promenade { height: 500px; isolation: isolate; }
+.city-promenade-world { width: 937.5px; will-change: transform; }
+.city-towner { width: 108px; height: 150px; transform: translate(-50%, -100%); filter: drop-shadow(0 12px 5px color-mix(in oklab, var(--background) 65%, transparent)); }
+.city-towner-image { transform-origin: 50% 100%; }
+.city-towner[data-direction="left"] .city-towner-image { transform: scaleX(-1); }
+.city-towner[data-walking="true"] .city-towner-image { animation: town-walk 350ms ease-in-out infinite alternate; }
+.city-towner[data-walking="true"][data-direction="left"] .city-towner-image { animation-name: town-walk-left; }
+.city-door { transform: translate(-50%, -50%); max-width: 200px; white-space: normal; height: auto; min-height: 36px; }
+@keyframes town-walk { to { transform: translateY(-4px) rotate(1deg); } }
+@keyframes town-walk-left { from { transform: scaleX(-1); } to { transform: scaleX(-1) translateY(-4px) rotate(1deg); } }
+@media (prefers-reduced-motion: reduce) { .city-towner[data-walking="true"] .city-towner-image { animation: none; } }
 .socialtown-universe input:not([type="checkbox"]):not([type="range"]), .socialtown-universe select {
   min-width: 0;
   border: 1px solid var(--border);

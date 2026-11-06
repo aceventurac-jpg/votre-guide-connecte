@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { DIFFICULTY, getArcadeSettings } from "@/lib/arcade-settings";
+import { Button } from "@/components/ui/button";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Sparkles, Swords } from "lucide-react";
+import scenery from "@/assets/socialtown-promenade.jpg";
+import walking from "@/assets/towner-walking.png";
+import punching from "@/assets/towner-combat.png";
+import rival from "@/assets/arcade-rival.png";
 
 export type Level = { name: string; theme: "night" | "neon" | "dock"; waves: number[]; boss: boolean };
 
@@ -7,20 +13,27 @@ type Ent = { x: number; y: number; hp: number; max: number; dir: 1 | -1; atk: nu
 
 const W = 640, H = 360, TOP = 220, BOT = 340;
 
-const THEMES = {
-  night: { sky: ["#0b0b2e", "#3a1b5c"], b: "#1a1640", win: "#ffd84a", floor: "#3b3346" },
-  neon: { sky: ["#12001f", "#ff2e88"], b: "#20103a", win: "#2ef2ff", floor: "#2a2030" },
-  dock: { sky: ["#1b2a4a", "#e07a3a"], b: "#22283a", win: "#ffb347", floor: "#4a3a2a" },
-};
-
 export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: number, win: boolean) => void }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const keys = useRef<Record<string, boolean>>({});
   const [hud, setHud] = useState({ hp: 100, max: 100, score: 0, wave: 1, over: "" });
+  const [ready, setReady] = useState(false);
+  const [assetError, setAssetError] = useState(false);
 
   useEffect(() => {
-    const c = ref.current!; const g = c.getContext("2d")!;
-    const t = THEMES[level.theme];
+    const c = ref.current;
+    if (!c) return;
+    const g = c.getContext("2d");
+    if (!g) return;
+    const images = [scenery, walking, punching, rival].map(src => { const image = new Image(); image.src = src; return image; });
+    let loaded = false, disposed = false;
+    setReady(false); setAssetError(false);
+    Promise.all(images.map(image => image.decode())).then(() => { if (!disposed) { loaded = true; setReady(true); } }).catch(() => { if (!disposed) setAssetError(true); });
+    const colors = getComputedStyle(c);
+    const primary = colors.getPropertyValue("--primary").trim();
+    const accent = colors.getPropertyValue("--accent").trim();
+    const background = colors.getPropertyValue("--background").trim();
+    const highlight = colors.getPropertyValue("--color-town-lemon").trim();
     const cfg = getArcadeSettings();
     const diff = DIFFICULTY[cfg.difficulty];
     const p: Ent = { x: 80, y: 280, hp: diff.playerHp, max: diff.playerHp, dir: 1, atk: 0, hit: 0, vx: 0, cd: 0 };
@@ -46,24 +59,24 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
     const ku = (e: KeyboardEvent) => { keys.current[e.key.toLowerCase()] = false; };
     window.addEventListener("keydown", kd); window.addEventListener("keyup", ku);
 
-    const drawFighter = (e: Ent, col: string, hair: string) => {
+    const drawFighter = (e: Ent) => {
       const sx = e.x - cam, sy = e.y;
-      g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(sx, sy, 18, 5, 0, 0, 7); g.fill();
+      g.fillStyle = background; g.globalAlpha = .45; g.beginPath(); g.ellipse(sx, sy, 22, 5, 0, 0, 7); g.fill(); g.globalAlpha = 1;
       const s = e.boss ? 1.4 : 1;
       g.save(); g.translate(sx, sy); g.scale(s * e.dir, s);
       if (e.hit > 0) g.globalAlpha = 0.5 + 0.5 * Math.sin(e.hit);
-      g.fillStyle = "#223"; g.fillRect(-8, -24, 6, 24); g.fillRect(2, -24, 6, 24);
-      g.fillStyle = col; g.fillRect(-10, -52, 20, 28);
-      g.fillStyle = "#e8b48a"; g.fillRect(-7, -66, 14, 14);
-      g.fillStyle = hair; g.fillRect(-8, -70, 16, 6);
-      g.fillStyle = "#e8b48a"; g.fillRect(8, -48, e.atk > 0 ? 22 : 8, 6);
+      const image = e === p ? images[e.atk > 0 ? 2 : 1] : images[3];
+      const bob = e.atk > 0 ? 0 : Math.sin(frame / 6 + e.x) * 1.5;
+      g.drawImage(image, -55 + (e.atk > 0 ? 8 : 0), -112 + bob, 112, 112);
+      if (e.atk > 0) { g.strokeStyle = e === p ? primary : accent; g.lineWidth = 2; g.beginPath(); g.arc(25, -65, 24, -.7, .8); g.stroke(); }
       g.restore();
-      if (e !== p) { g.fillStyle = "#300"; g.fillRect(sx - 15, sy - 85 * s, 30, 4); g.fillStyle = "#f33"; g.fillRect(sx - 15, sy - 85 * s, 30 * e.hp / e.max, 4); }
+      if (e !== p) { g.fillStyle = background; g.fillRect(sx - 18, sy - 115 * s, 36, 3); g.fillStyle = accent; g.fillRect(sx - 18, sy - 115 * s, 36 * e.hp / e.max, 3); }
     };
 
     let raf = 0, frame = 0;
     const loop = () => {
       frame++;
+      if (!loaded) { raf = requestAnimationFrame(loop); return; }
       const k = keys.current;
       if (!done) {
         const sp = 2.4;
@@ -94,60 +107,59 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
         if (frame % 6 === 0) setHud((h) => ({ ...h, hp: p.hp, max: p.max, score, wave: Math.min(wave, waves.length) }));
       }
       // render
-      g.save(); if (cfg.screenShake && shake > 0) { g.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake); shake--; } else if (shake > 0) shake--;
-      const grd = g.createLinearGradient(0, 0, 0, TOP); grd.addColorStop(0, t.sky[0]); grd.addColorStop(1, t.sky[1]);
-      g.fillStyle = grd; g.fillRect(0, 0, W, TOP);
-      for (let i = -1; i < 12; i++) {
-        const bx = i * 80 - (cam * 0.4) % 80, bh = 90 + ((i + Math.floor(cam * 0.4 / 80)) * 37 % 70);
-        g.fillStyle = t.b; g.fillRect(bx, TOP - bh, 70, bh);
-        g.fillStyle = t.win;
-        for (let wy = TOP - bh + 10; wy < TOP - 10; wy += 16) for (let wx = 8; wx < 62; wx += 16) if ((wx + wy + i) % 3) g.fillRect(bx + wx, wy, 6, 8);
-      }
-      g.fillStyle = t.floor; g.fillRect(0, TOP - 10, W, H);
-      g.strokeStyle = "rgba(255,255,255,.08)";
-      for (let i = 0; i < 14; i++) { const lx = i * 60 - cam % 60; g.beginPath(); g.moveTo(lx, TOP - 10); g.lineTo(lx - 60, H); g.stroke(); }
-      [...foes, p].sort((a, b) => a.y - b.y).forEach((e) => e === p ? drawFighter(e, "#f5f5f5", "#ffd84a") : drawFighter(e, e.boss ? "#7a1fa2" : "#2a6", e.boss ? "#111" : "#a33"));
+      g.save(); g.scale(2, 2); if (cfg.screenShake && shake > 0) { g.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake); shake--; } else if (shake > 0) shake--;
+      const scene = images[0];
+      const cropWidth = scene.naturalHeight * W / H;
+      const base = level.theme === "dock" ? 0 : level.theme === "night" ? 120 : 220;
+      const cropX = Math.min(scene.naturalWidth - cropWidth, base + cam * .12);
+      g.drawImage(scene, Math.max(0, cropX), 0, cropWidth, scene.naturalHeight, 0, 0, W, H);
+      [...foes, p].sort((a, b) => a.y - b.y).forEach(drawFighter);
       if (cfg.damageNumbers) {
         g.font = "bold 12px monospace"; g.textAlign = "center";
         for (let i = floats.length - 1; i >= 0; i--) {
           const f = floats[i]; f.life--; f.y -= 0.8;
           if (f.life <= 0) { floats.splice(i, 1); continue; }
-          g.fillStyle = "#ffd84a"; g.fillText(f.txt, f.x - cam, f.y);
+          g.fillStyle = highlight; g.fillText(f.txt, f.x - cam, f.y);
         }
       }
       g.restore();
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("keydown", kd); window.removeEventListener("keyup", ku); };
+    const clear = () => { keys.current = {}; };
+    window.addEventListener("blur", clear);
+    return () => { disposed = true; keys.current = {}; cancelAnimationFrame(raf); window.removeEventListener("keydown", kd); window.removeEventListener("keyup", ku); window.removeEventListener("blur", clear); };
   }, [level]);
 
-  const [touch] = useState(() => getArcadeSettings().touchControls);
+  const [touch, setTouch] = useState("auto");
+  useEffect(() => { setTouch(getArcadeSettings().touchControls); }, []);
   const touchCls = touch === "always" ? "" : touch === "never" ? "hidden" : "md:hidden";
   const press = (k: string, v: boolean) => { keys.current[k] = v; };
   const Btn = ({ k, label }: { k: string; label: string }) => (
-    <button className="size-14 rounded-full bg-primary/80 text-primary-foreground font-bold select-none touch-none"
-      onPointerDown={() => press(k, true)} onPointerUp={() => press(k, false)} onPointerLeave={() => press(k, false)}>{label}</button>
+    <Button size="icon" variant="outline" aria-label={label} title={label} className="size-11 select-none touch-none"
+      onPointerDown={e => { e.currentTarget.setPointerCapture(e.pointerId); press(k, true); }} onPointerUp={() => press(k, false)} onPointerCancel={() => press(k, false)}>
+      {k === "arrowup" ? <ArrowUp /> : k === "arrowdown" ? <ArrowDown /> : k === "arrowleft" ? <ArrowLeft /> : k === "arrowright" ? <ArrowRight /> : k === "j" ? <Swords /> : <Sparkles />}</Button>
   );
 
   return (
     <div className="w-full max-w-3xl mx-auto">
-      <div className="flex justify-between items-center font-mono text-sm px-2 py-1 bg-foreground text-background rounded-t">
+      <div className="flex flex-wrap gap-2 justify-between items-center font-mono text-xs px-3 py-3 bg-card text-primary border-b border-border">
         <span>1UP {String(hud.score).padStart(6, "0")}</span>
-        <span className="flex items-center gap-2">HP <span className="w-32 h-3 bg-destructive/40 inline-block"><span className="block h-3 bg-yellow-400" style={{ width: `${(hud.hp / hud.max) * 100}%` }} /></span></span>
+        <span className="flex items-center gap-2">HP <meter aria-label="Vie du Towner" min={0} max={hud.max} value={hud.hp} className="w-24 h-3 accent-primary" /> {hud.hp}</span>
         <span>VAGUE {hud.wave}/{level.waves.length}</span>
       </div>
       <div className="relative">
-        <canvas ref={ref} width={W} height={H} className="w-full bg-black [image-rendering:pixelated]" />
-        {hud.over && <div className="absolute inset-0 grid place-items-center bg-black/60 text-4xl font-black text-yellow-300">{hud.over}</div>}
+        <canvas aria-label="Combat Street Arcade dans la ville SocialTown" ref={ref} width={W * 2} height={H * 2} className="block w-full aspect-video bg-background" />
+        {!ready && <div role="status" className="absolute inset-0 grid place-items-center bg-background text-primary">{assetError ? "Le décor n’a pas pu se charger. Recharge la page." : "Connexion à l’arène…"}</div>}
+        {hud.over && <div className="absolute inset-0 grid place-items-center bg-background/60 text-3xl font-black text-town-lemon">{hud.over}</div>}
       </div>
       <div className={`flex justify-between p-3 ${touchCls}`}>
         <div className="grid grid-cols-3 gap-1">
-          <span /><Btn k="arrowup" label="▲" /><span />
-          <Btn k="arrowleft" label="◀" /><span /><Btn k="arrowright" label="▶" />
-          <span /><Btn k="arrowdown" label="▼" /><span />
+          <span /><Btn k="arrowup" label="Monter" /><span />
+          <Btn k="arrowleft" label="Gauche" /><span /><Btn k="arrowright" label="Droite" />
+          <span /><Btn k="arrowdown" label="Descendre" /><span />
         </div>
-        <div className="flex gap-2 items-center"><Btn k="j" label="👊" /><Btn k="l" label="💥" /></div>
+        <div className="flex gap-2 items-center"><Btn k="j" label="Frapper" /><Btn k="l" label="Attaque spéciale" /></div>
       </div>
       <p className="text-xs text-muted-foreground mt-2 hidden md:block">Flèches/ZQSD : bouger · J ou Espace : frapper · L : spéciale (coûte de la vie)</p>
     </div>

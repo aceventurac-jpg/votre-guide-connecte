@@ -4,7 +4,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, DoorOpen, ExternalLink, MapP
 import { Button } from "@/components/ui/button";
 import { getArcadeSettings } from "@/lib/arcade-settings";
 import { CITY_PORTALS, moveTowner, nearbyPortal, SHOPPING_CENTRES } from "@/lib/city-navigation";
-import promenade from "@/assets/socialtown-promenade.jpg";
+import promenade from "@/assets/socialtown-combat-quay.jpg";
 import character from "@/assets/towner-walking.png";
 
 export function CityPromenade({ name, onMission }: { name: string; onMission: () => void }) {
@@ -77,7 +77,7 @@ export function CityPromenade({ name, onMission }: { name: string; onMission: ()
           {CITY_PORTALS.map(p => <Button key={p.id} variant="outline" className="city-door absolute bg-background/90 text-xs" style={{ left: `${p.x / 1920 * 100}%`, top: `${(p.y - 135) / 1024 * 100}%` }} onClick={() => walkTo(p.x, p.y)}><DoorOpen />{p.id === "mall" ? centre.name : p.label}</Button>)}
           <div ref={actor} className="city-towner absolute" aria-label={`Personnage ${name}`}>
             <img src={character} width={816} height={816} alt="Towner" className="city-towner-image pointer-events-none size-full object-contain" />
-            <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded bg-background/90 px-2 text-xs text-primary">{name}</span>
+            <span className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded bg-background/90 px-2 text-xs text-primary">{name}</span>
           </div>
         </div>
         <span className="absolute left-3 top-3 rounded bg-background/85 px-3 py-2 font-mono text-[10px] text-town-lemon">VILLE VIRTUELLE · DÉCOR CONCEPTUEL</span>

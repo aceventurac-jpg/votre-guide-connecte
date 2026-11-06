@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { moveTowner, nearbyPortal, SHOPPING_CENTRES } from "./city-navigation";
 describe("City navigation", () => {
   test("movement keeps the character on the promenade", () => {

@@ -11,10 +11,10 @@ import { DIFFICULTY, useArcadeSettings, type ArcadeSettings } from "@/lib/arcade
 export const Route = createFileRoute("/arcade")({
   head: () => ({
     meta: [
-      { title: "Street Arcade — Joue et crée tes niveaux de baston" },
-      { name: "description", content: "Beat 'em up rétro en ligne : joue aux niveaux de la communauté et crée les tiens." },
-      { property: "og:title", content: "Street Arcade — Joue et crée" },
-      { property: "og:description", content: "Beat 'em up rétro : joue et crée tes propres niveaux." },
+      { title: "Street Arcade — Explore et joue dans SocialTown" },
+      { name: "description", content: "Explore les quais futuristes de SocialTown, entre dans les applications et crée tes niveaux de combat local." },
+      { property: "og:title", content: "Street Arcade — La ville SocialTown" },
+      { property: "og:description", content: "Personnages réalistes, promenade interactive et combats locaux dans l’univers SocialTown." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

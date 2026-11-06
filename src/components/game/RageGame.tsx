@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { DIFFICULTY, getArcadeSettings } from "@/lib/arcade-settings";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Sparkles, Swords } from "lucide-react";
-import scenery from "@/assets/socialtown-promenade.jpg";
+import scenery from "@/assets/socialtown-combat-quay.jpg";
 import walking from "@/assets/towner-walking.png";
 import punching from "@/assets/towner-combat.png";
 import rival from "@/assets/arcade-rival.png";

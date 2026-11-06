@@ -1,8 +1,8 @@
 # Modernisation SocialTown
 
 ## Correction Arcade et personnages
-- [ ] Corriger les erreurs des tests et les dimensions de la promenade.
-- [ ] Remplacer les personnages cubiques et les décors de combat par des visuels réalistes SocialTown.
+- [x] Corriger les erreurs des tests et les dimensions de la promenade.
+- [x] Remplacer les personnages cubiques et les décors de combat par des visuels réalistes SocialTown.
 - [ ] Vérifier combats, marche et accès aux applications sur petits et grands écrans.
 
 - [ ] Remplacer l’accueil filaire par une ville immersive, avec identité Towner, accès aux jeux, création, caméra et expériences.

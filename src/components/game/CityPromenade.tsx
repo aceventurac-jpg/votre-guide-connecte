@@ -4,7 +4,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, DoorOpen, ExternalLink, MapP
 import { Button } from "@/components/ui/button";
 import { getArcadeSettings } from "@/lib/arcade-settings";
 import { CITY_PORTALS, moveTowner, nearbyPortal, SHOPPING_CENTRES } from "@/lib/city-navigation";
-import promenade from "@/assets/socialtown-promenade.jpg";
+import promenade from "@/assets/socialtown-combat-quay.jpg";
 import character from "@/assets/towner-walking.png";
 
 export function CityPromenade({ name, onMission }: { name: string; onMission: () => void }) {

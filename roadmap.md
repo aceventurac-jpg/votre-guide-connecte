@@ -1,5 +1,13 @@
 # Modernisation SocialTown
 
+## Cœur avatar, cartographie et services réels
+- [ ] Relier un avatar humain/animal/robot hybride personnalisable à la promenade et aux combats.
+- [ ] Intégrer Google Maps mondial, recherche bornée de commerces et professions libérales, et lien carte ↔ Arcade.
+- [ ] Vérifier les parcours hors Google Maps ; la carte nécessite validation sur une origine déployée autorisée.
+- [ ] Audit et paramétrage de toutes les applications : distinguer fonctionnalités locales et actions réelles non connectées.
+- [ ] Achats et rendez-vous intégrés : bloqués par autorisations/catalogues/agendas des prestataires et vérification professionnelle.
+- [ ] Multijoueur et publication mondiale d’expériences : infrastructure et modération partagée restant à construire.
+
 ## Correction Arcade et personnages
 - [x] Corriger les erreurs des tests et les dimensions de la promenade.
 - [x] Remplacer les personnages cubiques et les décors de combat par des visuels réalistes SocialTown.

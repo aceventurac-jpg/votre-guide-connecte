@@ -1,5 +1,12 @@
 # Modernisation SocialTown
 
+## Monde Arcade opérationnel — demande du 9 novembre
+- [ ] Remplacer le fond figé par un monde spatial navigable au doigt, à la souris et au clavier, avec portes actives.
+- [ ] Donner accès à la carte mondiale et aux recherches de commerces/santé, puis rejoindre les résultats dans la ville virtuelle.
+- [ ] Ajouter les échanges directs entre Towners depuis le monde et vérifier l’envoi/relecture.
+- [ ] Préserver combats, création de niveaux, gangs et personnalisation ; vérifier ordinateur et tactile.
+- [ ] Signaler les limites : rendu Google Maps à vérifier sur domaine autorisé, achats et rendez-vous non connectés.
+
 ## Cœur avatar, cartographie et services réels
 - [ ] Relier un avatar humain/animal/robot hybride personnalisable à la promenade et aux combats.
 - [ ] Intégrer Google Maps mondial, recherche bornée de commerces et professions libérales, et lien carte ↔ Arcade.

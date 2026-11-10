@@ -24,6 +24,7 @@ import { Route as EcoRouteImport } from './routes/eco'
 import { Route as ForumRouteImport } from './routes/forum'
 import { Route as HealthCoachRouteImport } from './routes/health-coach'
 import { Route as ListingsRouteImport } from './routes/listings'
+import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as NewsPreferencesRouteImport } from './routes/news-preferences'
 import { Route as PetsRouteImport } from './routes/pets'
@@ -116,6 +117,11 @@ const HealthCoachRoute = HealthCoachRouteImport.update({
 const ListingsRoute = ListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsRoute = NewsRouteImport.update({
@@ -225,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/forum': typeof ForumRouteWithChildren
   '/health-coach': typeof HealthCoachRoute
   '/listings': typeof ListingsRouteWithChildren
+  '/messages': typeof MessagesRoute
   '/news': typeof NewsRoute
   '/news-preferences': typeof NewsPreferencesRoute
   '/pets': typeof PetsRoute
@@ -260,6 +267,7 @@ export interface FileRoutesByTo {
   '/forum': typeof ForumRouteWithChildren
   '/health-coach': typeof HealthCoachRoute
   '/listings': typeof ListingsRouteWithChildren
+  '/messages': typeof MessagesRoute
   '/news': typeof NewsRoute
   '/news-preferences': typeof NewsPreferencesRoute
   '/pets': typeof PetsRoute
@@ -296,6 +304,7 @@ export interface FileRoutesById {
   '/forum': typeof ForumRouteWithChildren
   '/health-coach': typeof HealthCoachRoute
   '/listings': typeof ListingsRouteWithChildren
+  '/messages': typeof MessagesRoute
   '/news': typeof NewsRoute
   '/news-preferences': typeof NewsPreferencesRoute
   '/pets': typeof PetsRoute
@@ -333,6 +342,7 @@ export interface FileRouteTypes {
     | '/forum'
     | '/health-coach'
     | '/listings'
+    | '/messages'
     | '/news'
     | '/news-preferences'
     | '/pets'
@@ -368,6 +378,7 @@ export interface FileRouteTypes {
     | '/forum'
     | '/health-coach'
     | '/listings'
+    | '/messages'
     | '/news'
     | '/news-preferences'
     | '/pets'
@@ -403,6 +414,7 @@ export interface FileRouteTypes {
     | '/forum'
     | '/health-coach'
     | '/listings'
+    | '/messages'
     | '/news'
     | '/news-preferences'
     | '/pets'
@@ -439,6 +451,7 @@ export interface RootRouteChildren {
   ForumRoute: typeof ForumRouteWithChildren
   HealthCoachRoute: typeof HealthCoachRoute
   ListingsRoute: typeof ListingsRouteWithChildren
+  MessagesRoute: typeof MessagesRoute
   NewsRoute: typeof NewsRoute
   NewsPreferencesRoute: typeof NewsPreferencesRoute
   PetsRoute: typeof PetsRoute
@@ -561,6 +574,13 @@ declare module '@tanstack/react-router' {
       path: '/listings'
       fullPath: '/listings'
       preLoaderRoute: typeof ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/news': {
@@ -742,6 +762,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForumRoute: ForumRouteWithChildren,
   HealthCoachRoute: HealthCoachRoute,
   ListingsRoute: ListingsRouteWithChildren,
+  MessagesRoute: MessagesRoute,
   NewsRoute: NewsRoute,
   NewsPreferencesRoute: NewsPreferencesRoute,
   PetsRoute: PetsRoute,

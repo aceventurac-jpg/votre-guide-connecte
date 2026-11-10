@@ -1,0 +1,31 @@
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { useServerFn } from '@tanstack/react-start';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { z } from 'zod';
+import { MessageCircle, Send, Search, ArrowLeft } from 'lucide-react';
+import { UniverseFrame } from '@/components/UniverseFrame';
+import { Button } from '@/components/ui/button';
+import { useIsAuthed } from '@/hooks/use-auth';
+import { findTowners } from '@/lib/world-social.functions';
+import { listConversations, listDirectThread, sendDirectMessage } from '@/lib/social.functions';
+
+export const Route = createFileRoute('/messages')({
+  validateSearch: (input: Record<string, unknown>) => ({ other_id: z.string().uuid().optional().catch(undefined).parse(input.other_id) }),
+  head: () => ({ meta: [{ title: 'Échanges Towners — SocialTown' }, { name: 'description', content: 'Retrouve les Towners et échange en privé depuis la ville SocialTown.' }, { property: 'og:title', content: 'Échanges Towners — SocialTown' }, { property: 'og:description', content: 'Contacts et conversations entre habitants de SocialTown.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }] }),
+  component: Messages,
+});
+function Messages() {
+  const { authed } = useIsAuthed(); const { other_id } = Route.useSearch(); const navigate = Route.useNavigate();
+  const inboxFn = useServerFn(listConversations), threadFn = useServerFn(listDirectThread), sendFn = useServerFn(sendDirectMessage), findFn = useServerFn(findTowners);
+  const qc = useQueryClient(); const [name, setName] = useState(''), [searchName, setSearchName] = useState<string | null>(null), [content, setContent] = useState('');
+  const inbox = useQuery({ queryKey: ['world-inbox'], queryFn: () => inboxFn(), enabled: !!authed, refetchInterval: 12000 });
+  const thread = useQuery({ queryKey: ['world-thread', other_id], queryFn: () => { if (!other_id) throw new Error('Choisir un Towner.'); return threadFn({ data: { other_id } }); }, enabled: !!authed && !!other_id, refetchInterval: 5000 });
+  const people = useQuery({ queryKey: ['world-towners', searchName], queryFn: () => findFn({ data: { name: searchName ?? '' } }), enabled: !!authed && searchName !== null });
+  const send = useMutation({ mutationFn: () => { if (!other_id) throw new Error('Choisir un Towner.'); return sendFn({ data: { receiver_id: other_id, content } }); }, onSuccess: () => { setContent(''); void qc.invalidateQueries({ queryKey: ['world-thread'] }); void qc.invalidateQueries({ queryKey: ['world-inbox'] }); } });
+  return <UniverseFrame><main className="mx-auto max-w-6xl px-4 py-6 space-y-5"><Button asChild variant="ghost"><Link to="/arcade"><ArrowLeft />Retour dans la ville</Link></Button><h1 className="font-display text-3xl font-bold flex items-center gap-3"><MessageCircle className="text-primary" />Échanges Towners</h1>
+    {!authed ? <Button asChild><Link to="/auth">Se connecter pour échanger</Link></Button> : <div className="grid gap-6 md:grid-cols-[300px_1fr]">
+    <aside className="space-y-3"><form className="flex gap-2" onSubmit={e => { e.preventDefault(); setSearchName(name.trim()); }}><input className="min-w-0 flex-1" aria-label="Nom du Towner" placeholder="Un Towner…" value={name} onChange={e => setName(e.target.value)} maxLength={60} /><Button type="submit" size="icon" aria-label="Rechercher un Towner"><Search /></Button></form>{people.isFetching && <p className="text-sm">Recherche…</p>}{people.data?.map(p => <Button key={p.id} variant="outline" className="w-full justify-start h-auto whitespace-normal" onClick={() => { setContent(''); void navigate({ search: { other_id: p.id } }); }}>{p.name || 'Towner'}{p.city ? ` · ${p.city}` : ''}</Button>)}{searchName !== null && people.data?.length === 0 && <p className="text-sm text-muted-foreground">Aucun Towner trouvé.</p>}<h2 className="font-bold pt-3">Conversations récentes</h2>{inbox.data?.conversations.map(c => <Button key={c.other_id} variant={other_id === c.other_id ? 'secondary' : 'outline'} className="w-full justify-start h-auto text-left" onClick={() => { setContent(''); void navigate({ search: { other_id: c.other_id } }); }}><span className="min-w-0"><span className="block">{c.other?.name || 'Towner'}{c.unread > 0 ? ' · Nouveau' : ''}</span><span className="block truncate max-w-60 text-xs text-muted-foreground">{c.content}</span></span></Button>)}{inbox.data?.conversations.length === 0 && <p className="text-sm text-muted-foreground">Aucune conversation.</p>}</aside>
+    <section className="min-w-0 border-l border-border pl-4 space-y-4">{other_id ? <><h2 className="text-xl font-bold">{thread.data?.other?.name || 'Conversation'}</h2><div className="world-messages space-y-3" aria-live="polite">{thread.isPending && <p>Chargement…</p>}{thread.data?.messages.map(m => <article key={m.id} className={`max-w-[90%] rounded-md p-3 text-sm ${m.sender_id === thread.data.me ? 'ml-auto bg-primary text-primary-foreground' : 'bg-secondary'}`}><p className="whitespace-pre-wrap break-words">{m.content}</p><time className="block text-[10px] mt-2 opacity-70">{new Date(m.created_at).toLocaleString('fr-FR')}</time></article>)}{thread.data?.messages.length === 0 && <p className="text-sm text-muted-foreground">Commencer la conversation.</p>}</div><form className="flex gap-2" onSubmit={e => { e.preventDefault(); send.mutate(); }}><textarea aria-label="Votre message" className="min-w-0 flex-1 bg-card border border-border rounded-md p-3" value={content} onChange={e => setContent(e.target.value)} maxLength={2000} rows={2} /><Button type="submit" disabled={!content.trim() || send.isPending || !thread.data?.other}><Send />Envoyer</Button></form></> : <p className="text-muted-foreground">Aucune conversation sélectionnée.</p>}{[inbox.error, people.error, thread.error, send.error].filter(Boolean).map((e, i) => <p key={i} role="alert" className="text-sm text-destructive">{e instanceof Error ? e.message : 'Échange indisponible.'}</p>)}</section></div>}
+  </main></UniverseFrame>;
+}

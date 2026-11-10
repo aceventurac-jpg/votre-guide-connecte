@@ -38,15 +38,15 @@ function Arcade() {
   const [draft, setDraft] = useState<Level>({ name: "Mon niveau", theme: "neon", waves: [2, 3], boss: true });
   const [code, setCode] = useState("");
   const [msg, setMsg] = useState("");
-  const [city, setCity] = useState(false);
+  const [city, setCity] = useState(true);
 
   useEffect(() => { try { setMine(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch {} }, []);
   const save = (list: Level[]) => { setMine(list); localStorage.setItem(KEY, JSON.stringify(list)); };
 
   if (city) return (
     <UniverseFrame><div className="mx-auto max-w-5xl p-4 sm:p-8">
-      <h1 className="text-xl font-black mb-2">VILLE LIBRE</h1>
-      <CityMode onExit={() => setCity(false)} />
+      <h1 className="text-xl font-black mb-2">SOCIALTOWN / MONDE ARCADE</h1>
+      <CityMode onExit={() => setCity(false)} onStudio={() => { setCity(false); setTimeout(() => document.getElementById("arcade-studio")?.scrollIntoView({ behavior: "smooth" }), 100); }} />
     </div></UniverseFrame>
   );
 

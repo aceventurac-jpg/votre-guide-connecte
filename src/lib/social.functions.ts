@@ -138,7 +138,7 @@ export const listDirectThread = createServerFn({ method: "POST" })
       .or(
         `and(sender_id.eq.${context.userId},receiver_id.eq.${data.other_id}),and(sender_id.eq.${data.other_id},receiver_id.eq.${context.userId})`,
       )
-      .order("created_at", { ascending: true })
+      .order("created_at", { ascending: false })
       .limit(300);
     if (error) throw new Error(error.message);
     await context.supabase
@@ -152,7 +152,7 @@ export const listDirectThread = createServerFn({ method: "POST" })
       .select("id, name, city")
       .eq("id", data.other_id)
       .maybeSingle();
-    return { messages: rows ?? [], other, me: context.userId };
+    return { messages: (rows ?? []).reverse(), other, me: context.userId };
   });
 
 export const listConversations = createServerFn({ method: "GET" })

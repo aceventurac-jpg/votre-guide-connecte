@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { RageGame, type Level } from "./RageGame";
 import { CityPromenade } from "./CityPromenade";
+import { TOWNER_FORMS, townerImage } from "@/lib/towner-avatar";
 import { Button } from "@/components/ui/button";
 
 // ---------- Types ----------
-export type Avatar = { skin: string; shirt: string; hair: string; name: string };
+export type Avatar = { skin: string; shirt: string; hair: string; name: string; form?: string };
 export type Gang = { name: string; color: string; members: number };
 
 type Mission = { x: number; y: number; title: string; gang: string; level: Level; done: boolean };
@@ -43,7 +44,7 @@ function buildMissions(): Mission[] {
 }
 
 // ---------- Component ----------
-export function CityMode({ onExit }: { onExit: () => void }) {
+export function CityMode({ onExit, onStudio }: { onExit: () => void; onStudio?: () => void }) {
   const [avatar, setAvatar] = useState<Avatar>({ skin: SKINS[0], shirt: SHIRTS[0], hair: HAIRS[0], name: "Towner" });
   const [gang, setGang] = useState<Gang | null>(null);
   const [xp, setXp] = useState(0);
@@ -77,6 +78,7 @@ export function CityMode({ onExit }: { onExit: () => void }) {
         <RageGame
           key={mission.title}
           level={mission.level}
+          avatarForm={avatar.form}
           onEnd={(score, win) => {
             if (win) addXp(50 + Math.floor(score / 500));
           }}
@@ -103,7 +105,7 @@ export function CityMode({ onExit }: { onExit: () => void }) {
         <span className="text-sm font-mono">XP {xp} · Niv. {1 + Math.floor(xp / 100)}</span>
       </div>
 
-      {tab === "city" && <CityPromenade name={avatar.name} onMission={() => setMission(buildMissions()[0])} />}
+      {tab === "city" && <CityPromenade name={avatar.name} form={avatar.form} onStudio={onStudio} onMission={() => setMission(buildMissions()[0])} />}
       {tab === "avatar" && <AvatarStudio avatar={avatar} onSave={saveAvatar} />}
       {tab === "gang" && <GangPanel gang={gang} onSave={saveGang} xp={xp} />}
     </div>
@@ -132,6 +134,8 @@ function AvatarStudio({ avatar, onSave }: { avatar: Avatar; onSave: (a: Avatar) 
   return (
     <div className="rounded-xl border p-4 space-y-4 max-w-md">
       <h3 className="font-bold text-lg">Studio Avatar</h3>
+      <img src={townerImage(avatar.form)} alt="Avatar sélectionné" width={1024} height={1024} className="h-48 w-full object-contain" />
+      <div className="grid grid-cols-2 gap-2">{TOWNER_FORMS.map(f => <Button key={f.id} variant={avatar.form === f.id ? "default" : "outline"} onClick={() => onSave({ ...avatar, form: f.id })}>{f.name}</Button>)}</div>
       <input
         className="w-full border rounded px-2 py-1 bg-background"
         value={avatar.name}
@@ -141,7 +145,7 @@ function AvatarStudio({ avatar, onSave }: { avatar: Avatar; onSave: (a: Avatar) 
       <Row label="Peau" values={SKINS} cur={avatar.skin} pick={(v) => onSave({ ...avatar, skin: v })} />
       <Row label="Tenue" values={SHIRTS} cur={avatar.shirt} pick={(v) => onSave({ ...avatar, shirt: v })} />
       <Row label="Cheveux" values={HAIRS} cur={avatar.hair} pick={(v) => onSave({ ...avatar, hair: v })} />
-      <p className="text-xs text-muted-foreground">Ton avatar te représente en ville. La couleur de ton gang remplace ta tenue en exploration.</p>
+      <p className="text-xs text-muted-foreground">La forme est partagée entre la rue et les combats. Les couleurs restent des préférences enregistrées sur cet appareil.</p>
     </div>
   );
 }

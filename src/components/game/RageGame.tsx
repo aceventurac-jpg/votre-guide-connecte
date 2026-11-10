@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { DIFFICULTY, getArcadeSettings } from "@/lib/arcade-settings";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Sparkles, Swords } from "lucide-react";
+import { townerImage } from "@/lib/towner-avatar";
 import scenery from "@/assets/socialtown-combat-quay.jpg";
 import walking from "@/assets/towner-walking.png";
 import punching from "@/assets/towner-combat.png";
@@ -13,7 +14,7 @@ type Ent = { x: number; y: number; hp: number; max: number; dir: 1 | -1; atk: nu
 
 const W = 640, H = 360, TOP = 220, BOT = 340;
 
-export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: number, win: boolean) => void }) {
+export function RageGame({ level, avatarForm, onEnd }: { level: Level; avatarForm?: string; onEnd?: (score: number, win: boolean) => void }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const keys = useRef<Record<string, boolean>>({});
   const [hud, setHud] = useState({ hp: 100, max: 100, score: 0, wave: 1, over: "" });
@@ -25,7 +26,7 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
     if (!c) return;
     const g = c.getContext("2d");
     if (!g) return;
-    const images = [scenery, walking, punching, rival].map(src => { const image = new Image(); image.src = src; return image; });
+    const images = [scenery, avatarForm ? townerImage(avatarForm) : walking, avatarForm ? townerImage(avatarForm) : punching, rival].map(src => { const image = new Image(); image.src = src; return image; });
     let loaded = false, disposed = false;
     setReady(false); setAssetError(false);
     Promise.all(images.map(image => image.decode())).then(() => { if (!disposed) { loaded = true; setReady(true); } }).catch(() => { if (!disposed) setAssetError(true); });
@@ -129,7 +130,7 @@ export function RageGame({ level, onEnd }: { level: Level; onEnd?: (score: numbe
     const clear = () => { keys.current = {}; };
     window.addEventListener("blur", clear);
     return () => { disposed = true; keys.current = {}; cancelAnimationFrame(raf); window.removeEventListener("keydown", kd); window.removeEventListener("keyup", ku); window.removeEventListener("blur", clear); };
-  }, [level]);
+  }, [level, avatarForm]);
 
   const [touch, setTouch] = useState("auto");
   useEffect(() => { setTouch(getArcadeSettings().touchControls); }, []);

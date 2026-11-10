@@ -1,5 +1,11 @@
 # Modernisation SocialTown
 
+## Agrégat réel-virtuel — demande du 10 novembre
+- [ ] Unifier promenade, véhicules (voiture, moto, vélo, skate, rollers), arène et création sans retirer les fonctions actuelles.
+- [ ] Relier recherche mondiale, fiche de lieu, contact et passage au site du prestataire ; aucun achat ou rendez-vous confirmé sans connexion autorisée.
+- [ ] Livrer une messagerie entre Towners et vérifier les parcours accessibles.
+- [ ] Documenter les blocages externes et distinguer monde local, services réels et multijoueur.
+
 ## Monde Arcade opérationnel — demande du 9 novembre
 - [ ] Remplacer le fond figé par un monde spatial navigable au doigt, à la souris et au clavier, avec portes actives.
 - [ ] Donner accès à la carte mondiale et aux recherches de commerces/santé, puis rejoindre les résultats dans la ville virtuelle.
